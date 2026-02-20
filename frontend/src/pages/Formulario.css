@@ -1,0 +1,87 @@
+.form-container {
+  max-width: 1200px;
+  margin: 10px auto;
+  padding: 10px;
+}
+
+.header-card {
+  border: 3px solid #39B49E;
+  border-radius: 12px;
+  padding: 0; 
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  background-color: #4f5d75;
+  color: white;
+  padding: 14px 20px; 
+  font-size: 14px;   
+  font-weight: 500;
+}
+
+.header-middle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.logo-section img {
+  width: 250px;
+}
+.header-middle,
+.header-title {
+  padding: 20px;
+}
+.header-text {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon.blue {
+  border: 2.5px solid #39B49E;
+}
+.icon.yellow {
+  border: 2px solid #EFB036;
+}
+
+.header-title {
+  text-align: center;
+  margin-top: 10px;
+  color: #333;
+}
+
+.header-title h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.header-title p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5a5959;
+}
