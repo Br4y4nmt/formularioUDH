@@ -19,3 +19,6 @@ body {
 .read-the-docs {
   display: none;
 }
+html {
+  color-scheme: light;
+}

@@ -5,12 +5,25 @@
   <title>Autorización de Publicación</title>
   <style>
     body { font-family: DejaVu Sans, Arial, Helvetica, sans-serif; font-size: 11px; color: #111; }
-    body {
-  margin: 35mm 18mm 18mm 18mm;
+    @page {
+  margin: 35mm 30mm 18mm 30mm;
 }
-    .header { display:flex; align-items:center; position:fixed; top:4mm; left:18mm; right:18mm; height:20mm; }
-    .logo { width: 140px; }
-    .header-center { position:absolute; left:80%; transform:translateX(-50%); top:0; bottom:0; margin:auto; text-align:center; font-size:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+  body {
+    margin: 0;
+  }
+    .header {
+  position: fixed;
+  top: -25mm;
+  left: 30mm;
+  right: 30mm;
+  height: 20mm;
+}
+    .logo {
+      width: 140px;
+      margin-left: -30mm;  /* ajusta el valor aquí */
+    }
+    .header-center { position:absolute; left:100%; transform:translateX(-50%); top:0; bottom:0; margin:auto; text-align:center; font-size:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
     .header-center .university-title { font-weight:700; font-size:13px; white-space:nowrap; }
     .header-center .vice-title { font-size:11px; color:#666; white-space:nowrap; }
     h1 { font-size:14px; text-align:center; margin:4px 0; }
@@ -35,6 +48,35 @@
       padding:1.5px 4px;
       line-height:1.05;
     }
+    .signatures-row {
+      margin-top: 150px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .signature-block {
+      display: inline-block;
+      width: 40%;
+      text-align: center;
+      vertical-align: top;
+    }
+
+    .signature-line {
+      border-top: 1px solid #000;
+      width: 70%;
+      margin: 0 auto 5px auto;
+    }
+    .footer {
+      position: fixed;
+      bottom: -10mm;     
+      left: 30mm;
+      right: 30mm;
+      text-align: center;
+      font-size: 9px;
+      color: #777777;    
+      line-height: 1.4;
+      white-space: nowrap; 
+    }
     .small { font-size:10px; }
     .declaration { border:1px solid #000; padding:8px; text-align:justify; line-height:1.4; }
     /* Boxed declaration with painted header (used in section 6) */
@@ -52,7 +94,7 @@
     .sign-table td.signature { width:34%; height:24px; }
     .note { font-size:10px; margin-top:8px; }
     ul.notes { margin:6px 0 0 18px; }
-    .top-lines { margin-top:-60px; text-align:center; font-size:10px; color:#444; margin-bottom:6px; }
+    .top-lines { margin-top:-40px; text-align:center; font-size:10px; color:#444; margin-bottom:6px; }
     .top-lines .line { margin:2px 0; }
   </style>
 </head>
@@ -72,8 +114,6 @@
       <div class="line">"Decenio de la Igualdad de Oportunidades para Mujeres y Hombres"</div>
       <div class="line">"Año de la Esperanza y el Fortalecimiento de la Democracia"</div>
     </div>
-
-    <h1>Autorización de publicación</h1>
 
     <div class="document-title">AUTORIZACIÓN DE PUBLICACIÓN DIGITAL Y DECLARACIÓN JURADA DEL TRABAJO DE INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL</div>
 
@@ -146,30 +186,66 @@
       @endforeach
     </table>
     
-      <h2 style="font-size:10px; margin-top:10px;">3. Datos del Asesor: <span class="table-note">(Ingrese los datos según corresponda)</span></h2>
+<h2 style="font-size:10px; margin-top:10px;">
+  3. Datos del Asesor:
+  <span class="table-note">(Ingrese los datos según corresponda)</span>
+</h2>
 
-      <table class="t-bordered small compact-table" style="margin-top:-5px;">
-        @php $s = $advisor ?? ($asesor ?? []); @endphp
-        <tr>
-          <td style="width:18%"><strong>Apellidos y Nombres:</strong></td>
-          <td colspan="8">{{ $s['full_name'] ?? '' }}</td>
-        </tr>
-        <tr>
-          <td><strong>Tipo de Documento:</strong></td>
-          <td class="doc-label" style="width:8%">DNI</td>
-          <td style="width:3%;" class="doc-box @if(isset($s['doc_type']) && (stripos($s['doc_type'],'dni') !== false)) filled @endif">@if(isset($s['doc_type']) && (stripos($s['doc_type'],'dni') !== false)) X @endif</td>
-          <td class="doc-label" style="width:8%">Pasaporte</td>
-          <td style="width:3%;" class="doc-box @if(isset($s['doc_type']) && (stripos($s['doc_type'],'pasaporte') !== false)) filled @endif">@if(isset($s['doc_type']) && (stripos($s['doc_type'],'pasaporte') !== false)) X @endif</td>
-          <td class="doc-label" style="width:8%">C.E.</td>
-          <td style="width:3%;" class="doc-box @if(isset($s['doc_type']) && (stripos($s['doc_type'],'c.e') !== false || stripos($s['doc_type'],'ce') !== false)) filled @endif">@if(isset($s['doc_type']) && (stripos($s['doc_type'],'c.e') !== false || stripos($s['doc_type'],'ce') !== false)) X @endif</td>
-          <td class="doc-label" style="width:12%"><strong>N° de Documento:</strong></td>
-          <td style="width:10%;">{{ $s['doc_number'] ?? '' }}</td>
-        </tr>
-        <tr>
-          <td><strong>ORCID ID:</strong></td>
-          <td colspan="8">{{ $s['orcid'] ?? '' }}</td>
-        </tr>
-      </table>
+@php
+  $asesores = $advisors ?? [];
+@endphp
+
+@foreach($asesores as $index => $s)
+  @php $dt = strtolower($s['doc_type'] ?? ''); @endphp
+
+  <table class="t-bordered small compact-table" style="margin-top:4px;">
+    
+    {{-- Encabezado asesor --}}
+    <tr>
+      <td colspan="9" style="background:#f2f2f2; font-weight:700;">
+        {{ $index == 0 ? 'Asesor Metodológico' : 'Asesor Técnico' }}
+      </td>
+    </tr>
+
+    <tr>
+      <td style="width:18%"><strong>Apellidos y Nombres:</strong></td>
+      <td colspan="8">{{ $s['full_name'] ?? '' }}</td>
+    </tr>
+
+    <tr>
+      <td><strong>Tipo de Documento:</strong></td>
+
+      <td class="doc-label" style="width:8%">DNI</td>
+      <td style="width:3%;" class="doc-box @if(strpos($dt,'dni') !== false) filled @endif">
+        @if(strpos($dt,'dni') !== false) X @endif
+      </td>
+
+      <td class="doc-label" style="width:8%">Pasaporte</td>
+      <td style="width:3%;" class="doc-box @if(strpos($dt,'pasaporte') !== false) filled @endif">
+        @if(strpos($dt,'pasaporte') !== false) X @endif
+      </td>
+
+      <td class="doc-label" style="width:8%">C.E.</td>
+      <td style="width:3%;" class="doc-box @if(strpos($dt,'c.e') !== false || strpos($dt,'ce') !== false) filled @endif">
+        @if(strpos($dt,'c.e') !== false || strpos($dt,'ce') !== false) X @endif
+      </td>
+
+      <td class="doc-label" style="width:12%">
+        <strong>N° de Documento:</strong>
+      </td>
+
+      <td style="width:10%;">
+        {{ $s['doc_number'] ?? '' }}
+      </td>
+    </tr>
+
+    <tr>
+      <td><strong>ORCID ID:</strong></td>
+      <td colspan="8">{{ $s['orcid'] ?? '' }}</td>
+    </tr>
+
+  </table>
+@endforeach
 
 <h2 style="font-size:10px; margin-top:10px;">4. Datos de los Jurados: <span class="table-note">(Ingrese los datos según corresponda, primero apellidos luego nombres)</span></h2>
 
@@ -194,7 +270,7 @@
         </tr>
       </table>
 
-      <h2 style="font-size:10px; margin-top:10px;">5. Datos del Documento Digital a Publicar: <span class="table-note">(Ingrese los datos y marque con una "X" según corresponda)</span></h2>
+      <h2 style="font-size:10px; margin-top:5px;">5. Datos del Documento Digital a Publicar: <span class="table-note">(Ingrese los datos y marque con una "X" según corresponda)</span></h2>
 
       <table class="t-bordered small compact-table" style="margin-top:-5px;">
         <tr>
@@ -233,7 +309,7 @@
         </tr>
       </table>
 
-      <h2 style="font-size:10px; margin-top:5px;">6. Declaración Jurada: (Ingrese todos los datos requeridos completos)</h2>
+      <h2 style="font-size:10px; margin-top:10px;">6. Declaración Jurada: (Ingrese todos los datos requeridos completos)</h2>
 
 <table style="width:100%; border-collapse:collapse; margin-top:-5px;">
   
@@ -269,10 +345,12 @@
 </div>
 
     <h2 style="font-size:10px; margin-top:10px;">7. Autorización de Publicación Digital</h2>
+    <div class="no-break">
+
     <div class="declaration" style="margin-bottom:6px; margin-top:-5px;">A través de la presente autorizo de manera gratuita a la Universidad Nacional Hermilio Valdizán a publicar la versión digital de este trabajo de investigación en su biblioteca virtual, repositorio institucional y base de datos.</div>
 
     <table class="t-bordered sign-table" style="margin-top:-5px; width:100%;">
-      @for($i=0;$i<3;$i++)
+      @for($i=0;$i<2;$i++)
         <tr>
           <td class="label">Apellidos y Nombres</td>
           <td class="name">{{ $authors[$i]['full_name'] ?? '' }}</td>
@@ -283,16 +361,25 @@
     </table>
 
     <p style="margin-top:8px;"><strong>FECHA:</strong> {{ $fecha }}</p>
+    <div class="signatures-row">
 
-    <div class="note small">
-      <strong>Nota:</strong>
-      <ul class="notes">
-        <li>No modificar los textos preestablecidos, conservar la estructura del documento.</li>
-        <li>Marque con una X en el recuadro que corresponde.</li>
-        <li>Llene cada dato del mismo tipo de letra Calibri, tamaño de fuente 09.</li>
-      </ul>
-    </div>
-
+  <div class="signature-block">
+    <div class="signature-line"></div>
+    V°B° ASESOR(A)
   </div>
+
+  <div class="signature-block">
+    <div class="signature-line"></div>
+    V°B° ASESOR(A)
+  </div>
+
+</div>
+  </div>
+
+  <div class="footer">
+  Jr. Hermilio Valdizán N° 871 – Jr. Progreso N° 650 – Teléfonos: (062) 511-113<br>
+  Telefax: (062) 513-154<br>
+  Huánuco – Perú
+</div>
 </body>
 </html>

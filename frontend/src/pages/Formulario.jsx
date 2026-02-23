@@ -39,7 +39,10 @@ function Formulario() {
     { full_name: "", doc_type: "dni", doc_number: "", email: "" },
     { full_name: "", doc_type: "dni", doc_number: "", email: "" },
   ]);
-  const [advisor, setAdvisor] = useState({ full_name: "", doc_type: "dni", doc_number: "", orcid: "" });
+const [advisors, setAdvisors] = useState([
+  { full_name: "", doc_type: "dni", doc_number: "", orcid: "" },
+  { full_name: "", doc_type: "dni", doc_number: "", orcid: "" },
+]);
   const [jurados, setJurados] = useState([
     { role: "Presidente", name: "" },
     { role: "Secretario", name: "" },
@@ -151,28 +154,29 @@ function Formulario() {
     });
   }, []);
 
-  const handleAdvisorChange = useCallback((e) => {
-    const fieldName = e.target.name;
-    let value = e.target.value;
+const handleAdvisorChange = useCallback((index, e) => {
+  const { name, value } = e.target;
 
-    setAdvisor((prev) => {
-      const updated = { ...prev, [fieldName]: value };
+  setAdvisors((prev) =>
+    prev.map((advisor, i) => {
+      if (i !== index) return advisor;
 
-      if (fieldName === "doc_number") {
-        if (updated.doc_type === "dni") {
-          updated.doc_number = value.replace(/\D/g, "").slice(0, 8);
-        }
+      const updated = { ...advisor, [name]: value };
+
+      if (name === "doc_number" && updated.doc_type === "dni") {
+        updated.doc_number = value.replace(/\D/g, "").slice(0, 8);
       }
 
-      if (fieldName === "doc_type") {
-        if (value === "dni") {
-          updated.doc_number = (updated.doc_number || "").replace(/\D/g, "").slice(0, 8);
-        }
+      if (name === "doc_type" && value === "dni") {
+        updated.doc_number = (updated.doc_number || "")
+          .replace(/\D/g, "")
+          .slice(0, 8);
       }
 
       return updated;
-    });
-  }, []);
+    })
+  );
+}, []);
 
   const showGroupA =
     formData.selectedDegree === "bachiller" ||
@@ -206,7 +210,7 @@ function Formulario() {
           email: a.email,
           firma_path: a.firma_path || null
         })),
-        advisor: advisor,
+        advisors: advisors,
         jurados: jurados,
         documentData,
         declaration_title: formData.declaration_title,
@@ -220,11 +224,9 @@ function Formulario() {
         body: JSON.stringify(payload)
       });
 
-        // Inspect content-type to correctly handle JSON, plain text URL, or binary PDF
         const contentType = res.headers.get('content-type') || '';
 
         if (!res.ok) {
-          // Try to read error body as text for diagnostics
           const errText = await res.text();
           let errJson = null;
           try { errJson = errText ? JSON.parse(errText) : null; } catch (e) { errJson = null; }
@@ -233,14 +235,20 @@ function Formulario() {
         }
 
         if (contentType.includes('application/pdf')) {
-          // Backend returned PDF binary directly — open in new tab
           const blob = await res.blob();
           const blobUrl = URL.createObjectURL(blob);
-          window.open(blobUrl, '_blank');
+
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'Formulario autorizacion derechos'; 
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          URL.revokeObjectURL(blobUrl);
           return;
         }
 
-        // If JSON
         if (contentType.includes('application/json')) {
           const json = await res.json();
           if (json.url) {
@@ -253,20 +261,17 @@ function Formulario() {
           }
         }
 
-        // Fallback: read as text. Could be a plain URL or HTML/error page.
         const text = await res.text();
         if (text && /^https?:\/\//.test(text.trim())) {
           window.open(text.trim(), '_blank');
           return;
         }
-
-        // Show the first 2000 chars of response for debugging
         alert('PDF generado (respuesta):\n' + (text ? text.substring(0, 2000) : '[vacío]'));
     } catch (err) {
       console.error('Error generating PDF', err);
       alert('Error generando PDF: ' + (err.message || err));
     }
-  }, [formData, authors, advisor, jurados, documentData]);
+  }, [formData, authors, advisors, jurados, documentData]);
 
   return (
   <div className="form-container">
@@ -289,7 +294,7 @@ function Formulario() {
     <AutorSection authors={authors} onAuthorChange={handleAuthorChange} />
 
     
-    <AdvisorSection advisor={advisor} onAdvisorChange={handleAdvisorChange} />
+    <AdvisorSection advisors={advisors} onAdvisorChange={handleAdvisorChange} />
 
     <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} />
 

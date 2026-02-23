@@ -166,7 +166,7 @@ function DegreeSection({
               </tr>
 
               <tr>
-                <td className="label-cell">Grado que otorga:</td>
+                <td className="label-cell">Grado que se le otorga:</td>
                 <td colSpan="5">
                   <input
                     type="text"

@@ -442,3 +442,13 @@
   font-size: 14px;
   color: #ef4444;
 }
+.form-table input[type="text"],
+.form-table input[type="email"],
+.form-table input[type="url"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cfd6dd;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #1f2937;
+}

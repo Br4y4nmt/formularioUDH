@@ -3,52 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PublicationPdfController extends Controller
 {
     public function generate(Request $request)
     {
-        $data = $request->validate([
-            'facultad_name' => 'nullable|string',
-            'programa_name' => 'nullable|string',
-            'titulo_otorga'  => 'nullable|string',
-            'authors'        => 'nullable|array',
+        $validated = $request->validate([
+
+            'selectedDegree' => 'nullable|string',
+
+            'facultad_escuela' => 'nullable|string',
+            'escuela_carrera' => 'nullable|string',
+            'programa_academico' => 'nullable|string',
+            'titulo_otorga' => 'nullable|string',
+            'grado_otorga' => 'nullable|string',
+            'authors' => 'nullable|array',
             'authors.*.full_name' => 'nullable|string',
+            'authors.*.doc_type' => 'nullable|string',
+            'authors.*.doc_number' => 'nullable|string',
+            'authors.*.email' => 'nullable|string',
+            'advisors' => 'nullable|array',
+            'advisors.*.full_name' => 'nullable|string',
+            'advisors.*.doc_type' => 'nullable|string',
+            'advisors.*.doc_number' => 'nullable|string',
+            'advisors.*.orcid' => 'nullable|string',
+            'jurados' => 'nullable|array',
+            'documentData' => 'nullable|array',
             'declaration_title' => 'nullable|string',
-            'declaration_text'  => 'nullable|string',
+            'declaration_text' => 'nullable|string',
             'fecha' => 'nullable|string',
         ]);
 
-            // Accept flexible payload from frontend (many fields) — keep light validation
-            $payload = $request->all();
+        $payload = $request->all();
 
-            // Defaults
-            $defaults = [
-                'selectedDegree' => null,
-                'facultad_escuela' => 'CIENCIAS ADMINISTRATIVAS Y TURISMO',
-                'escuela_carrera' => null,
-                'programa_academico' => 'CIENCIAS ADMINISTRATIVAS',
-                'titulo_otorga' => 'LICENCIADO EN ADMINISTRACIÓN',
-                'grado_otorga' => null,
-                'authors' => [],
-                'advisor' => null,
-                'jurados' => [],
-                'documentData' => [],
-                'declaration_title' => '',
-                'declaration_text' => '',
-                'fecha' => now()->format('d \d\e F Y'),
-            ];
+        $defaults = [
+            'selectedDegree' => null,
 
-            $data = array_merge($defaults, $payload);
+            'facultad_escuela' => 'CIENCIAS ADMINISTRATIVAS Y TURISMO',
+            'escuela_carrera' => null,
+            'programa_academico' => 'CIENCIAS ADMINISTRATIVAS',
+            'titulo_otorga' => 'LICENCIADO EN ADMINISTRACIÓN',
+            'grado_otorga' => null,
+
+            'authors' => [],
+            'advisors' => [], 
+            'jurados' => [],
+            'documentData' => [],
+
+            'declaration_title' => '',
+            'declaration_text' => '',
+
+            'fecha' => now()->format('d \d\e F Y'),
+        ];
+
+        $data = array_merge($defaults, $payload);
 
         $pdf = \PDF::loadView('pdf.publication', $data);
-        $fileName = 'autorizacion_publicacion_' . now()->format('Ymd_His') . '.pdf';
 
-        // Return PDF binary directly (do not save to disk)
-        $content = $pdf->output();
+        $fileName = 'Formulario autorizacion derechos';
 
-        return response($content, 200)
+        return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', "inline; filename=\"{$fileName}\"");
     }
