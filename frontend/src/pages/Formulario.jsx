@@ -1,8 +1,16 @@
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+const API_BASE = import.meta.env.VITE_API_URL || '';
+import { getFacultades, getProgramas } from "../services/facultadService";
 import "./Formulario.css";
-import GraduationIcon from "../components/GraduationIcon";
-import BuildingIcon from "../components/BuildingIcon";
-
+import CheckIcon from "../components/CheckIcon";
+import Header from "../components/Formulario/Header";
+import AutorSection from "../components/Formulario/AutorSection";
+import AdvisorSection from "../components/Formulario/AdvisorSection";
+import DegreeSection from "../components/Formulario/DegreeSection";
+import JuradosSection from "../components/Formulario/JuradosSection";
+import DocumentSection from "../components/Formulario/DocumentSection";
+import DeclarationSection from "../components/Formulario/DeclarationSection";
+import PublicationAuthSection from "../components/Formulario/PublicationAuthSection";
 
 function Formulario() {
   const [formData, setFormData] = useState({
@@ -15,65 +23,288 @@ function Formulario() {
     anio: "",
     palabras_clave: "",
     tipo_acceso: "",
+    selectedDegree: "",
+    facultad_escuela: "",
+    escuela_carrera: "",
+    titulo_otorga: "",
+    programa_academico: "",
+    grado_otorga: "",
+    declaration_title: "",
+    declaration_text: `Mediante la presente asumo frente a la Universidad Nacional Hermilio Valdizán (en adelante LA UNIVERSIDAD), cualquier responsabilidad que pueda derivarse por la autoría, originalidad y veracidad del contenido del trabajo de investigación y/o tomo por los derechos de la obra y/o invención presentada. En consecuencia, me hago responsable frente a LA UNIVERSIDAD y frente a terceros de cualquier daño que pudiera ocasionar a LA UNIVERSIDAD o a terceros, por el incumplimiento de lo declarado o que pudiera encontrar causas en los trabajos de investigación presentado, asumiendo toda la carga pecuniaria que pudiera derivarse de ello. Asimismo, por la presente me comprometo a asumir además todas las cargas pecuniarias que pudieran derivar para LA UNIVERSIDAD en favor de terceros por motivos de acciones, reclamaciones o conflictos derivados del incumplimiento de lo declarado o las que encontraran causa en el contenido del Trabajo de Investigación. De identificarse fraude, piratería, plagio, falsificación o que el trabajo haya sido publicado anteriormente; asumo las consecuencias y sanciones que de mis acciones se deriven, sometiéndome a las acciones legales y administrativas vigentes.`,
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [facultades, setFacultades] = useState([]);
+  const [programas, setProgramas] = useState([]);
+  const [authors, setAuthors] = useState([
+    { full_name: "", doc_type: "dni", doc_number: "", email: "" },
+    { full_name: "", doc_type: "dni", doc_number: "", email: "" },
+  ]);
+  const [advisor, setAdvisor] = useState({ full_name: "", doc_type: "dni", doc_number: "", orcid: "" });
+  const [jurados, setJurados] = useState([
+    { role: "Presidente", name: "" },
+    { role: "Secretario", name: "" },
+    { role: "Vocal", name: "" },
+    { role: "Accesitario", name: "" },
+  ]);
+  const [documentData, setDocumentData] = useState({
+    year: new Date().getFullYear(),
+    modalidad: {
+      trabajo_investigacion: false,
+      tesis: false,
+      trabajo_suficiencia: false,
+    },
+    palabras_clave: "",
+    tipo_acceso: {
+      abierto: false,
+      cerrado: false,
+      restringido: false,
+    },
+    embargo_periodo: "",
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  };
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleJuradoChange = useCallback((index, e) => {
+    const value = e.target.value;
+    setJurados((prev) => prev.map((j, i) => (i === index ? { ...j, name: value } : j)));
+  }, []);
+
+  const toggleModalidad = useCallback((key) => {
+    setDocumentData((prev) => ({
+      ...prev,
+      modalidad: { trabajo_investigacion: false, tesis: false, trabajo_suficiencia: false, [key]: true },
+    }));
+  }, []);
+
+  const handleDocumentChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setDocumentData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const selectTipoAcceso = useCallback((key) => {
+    setDocumentData((prev) => ({
+      ...prev,
+      tipo_acceso: { abierto: false, cerrado: false, restringido: false, [key]: true },
+    }));
+  }, []);
+
+
+  const selectDegree = useCallback((key) => {
+    setFormData((prev) => ({ ...prev, selectedDegree: key }));
+  }, []);
+
+  useEffect(() => {
+    const loadFacultades = async () => {
+      try {
+        const list = await getFacultades();
+        setFacultades(list);
+      } catch (err) {
+        console.error("Error loading facultades", err);
+      }
+    };
+    loadFacultades();
+  }, []);
+
+  const handleFacultadChange = useCallback(async (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, facultad_escuela: value }));
+    if (!value) {
+      setProgramas([]);
+      setFormData((prev) => ({ ...prev, programa_academico: "", escuela_carrera: "" }));
+      return;
+    }
+    try {
+      const list = await getProgramas(value);
+      setProgramas(list);
+      setFormData((prev) => ({ ...prev, programa_academico: "", escuela_carrera: "" }));
+    } catch (err) {
+      console.error("Error loading programas", err);
+      setProgramas([]);
+    }
+  }, []);
+
+  const handleAuthorChange = useCallback((index, e) => {
+    const fieldName = e.target.dataset.field || e.target.name;
+    let value = e.target.value;
+    setAuthors((prev) => {
+      return prev.map((a, i) => {
+        if (i !== index) return a;
+        const updated = { ...a, [fieldName]: value };
+
+        if (fieldName === "doc_number") {
+          if (updated.doc_type === "dni") {
+            updated.doc_number = value.replace(/\D/g, "").slice(0, 8);
+          }
+        }
+
+        if (fieldName === "doc_type") {
+          if (value === "dni") {
+            updated.doc_number = (updated.doc_number || "").replace(/\D/g, "").slice(0, 8);
+          }
+        }
+
+        return updated;
+      });
+    });
+  }, []);
+
+  const handleAdvisorChange = useCallback((e) => {
+    const fieldName = e.target.name;
+    let value = e.target.value;
+
+    setAdvisor((prev) => {
+      const updated = { ...prev, [fieldName]: value };
+
+      if (fieldName === "doc_number") {
+        if (updated.doc_type === "dni") {
+          updated.doc_number = value.replace(/\D/g, "").slice(0, 8);
+        }
+      }
+
+      if (fieldName === "doc_type") {
+        if (value === "dni") {
+          updated.doc_number = (updated.doc_number || "").replace(/\D/g, "").slice(0, 8);
+        }
+      }
+
+      return updated;
+    });
+  }, []);
+
+  const showGroupA =
+    formData.selectedDegree === "bachiller" ||
+    formData.selectedDegree === "titulo";
+  const showGroupB =
+    formData.selectedDegree === "segunda" ||
+    formData.selectedDegree === "maestro" ||
+    formData.selectedDegree === "doctor";
+  const showFacultad = showGroupA || showGroupB;
+  const anySelected = formData.selectedDegree !== "";
+
+  const handleGeneratePdf = useCallback(async () => {
+    try {
+      const months = [
+        'enero','febrero','marzo','abril','mayo','junio','julio','agosto','setiembre','octubre','noviembre','diciembre'
+      ];
+      const today = new Date();
+      const fecha = `Huánuco ${today.getDate()} de ${months[today.getMonth()]} del ${today.getFullYear()}`;
+
+      const payload = {
+        selectedDegree: formData.selectedDegree,
+        facultad_escuela: formData.facultad_escuela,
+        escuela_carrera: formData.escuela_carrera,
+        programa_academico: formData.programa_academico,
+        titulo_otorga: formData.titulo_otorga,
+        grado_otorga: formData.grado_otorga,
+        authors: authors.map(a => ({
+          full_name: a.full_name,
+          doc_type: a.doc_type,
+          doc_number: a.doc_number,
+          email: a.email,
+          firma_path: a.firma_path || null
+        })),
+        advisor: advisor,
+        jurados: jurados,
+        documentData,
+        declaration_title: formData.declaration_title,
+        declaration_text: formData.declaration_text,
+        fecha,
+      };
+
+      const res = await fetch(`${API_BASE}/api/pdf/publication`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+        // Inspect content-type to correctly handle JSON, plain text URL, or binary PDF
+        const contentType = res.headers.get('content-type') || '';
+
+        if (!res.ok) {
+          // Try to read error body as text for diagnostics
+          const errText = await res.text();
+          let errJson = null;
+          try { errJson = errText ? JSON.parse(errText) : null; } catch (e) { errJson = null; }
+          const message = (errJson && errJson.message) ? errJson.message : (errText || `HTTP ${res.status}`);
+          throw new Error(message);
+        }
+
+        if (contentType.includes('application/pdf')) {
+          // Backend returned PDF binary directly — open in new tab
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          window.open(blobUrl, '_blank');
+          return;
+        }
+
+        // If JSON
+        if (contentType.includes('application/json')) {
+          const json = await res.json();
+          if (json.url) {
+            window.open(json.url, '_blank');
+            return;
+          }
+          if (json.path || json.file) {
+            alert('PDF generado: ' + (json.path || json.file));
+            return;
+          }
+        }
+
+        // Fallback: read as text. Could be a plain URL or HTML/error page.
+        const text = await res.text();
+        if (text && /^https?:\/\//.test(text.trim())) {
+          window.open(text.trim(), '_blank');
+          return;
+        }
+
+        // Show the first 2000 chars of response for debugging
+        alert('PDF generado (respuesta):\n' + (text ? text.substring(0, 2000) : '[vacío]'));
+    } catch (err) {
+      console.error('Error generating PDF', err);
+      alert('Error generando PDF: ' + (err.message || err));
+    }
+  }, [formData, authors, advisor, jurados, documentData]);
 
   return (
   <div className="form-container">
 
-    <div className="header-card">
+    <Header />
 
-      <div className="header-top">
-        <div>UNIVERSIDAD DE HUÁNUCO</div>
-        <div>SECRETARIADO VICERRECTORADO ACADÉMICO</div>
-      </div>
+    <DegreeSection
+      formData={formData}
+      selectDegree={selectDegree}
+      facultades={facultades}
+      programas={programas}
+      handleFacultadChange={handleFacultadChange}
+      handleChange={handleChange}
+      showFacultad={showFacultad}
+      showGroupA={showGroupA}
+      showGroupB={showGroupB}
+      anySelected={anySelected}
+    />
 
-      <div className="header-middle">
+    <AutorSection authors={authors} onAuthorChange={handleAuthorChange} />
 
-        <div className="logo-section">
-          <img src="/images/Logo.png" alt="Logo Universidad" />
-        </div>
+    
+    <AdvisorSection advisor={advisor} onAdvisorChange={handleAdvisorChange} />
 
-        <div className="header-text">
-          <p>"Decenio de la Igualdad de Oportunidades para Mujeres y Hombres"</p>
-          <p>"Año de la Recuperación y Consolidación de la Economía Peruana"</p>
-        </div>
+    <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} />
 
-        <div className="header-icons">
-            <div className="icon blue">
-            <GraduationIcon size={28} color="#39B49E" />
-            </div>
-            <div className="icon yellow">
-            <BuildingIcon size={28} color="#EFB036" />
-            </div>
-        </div>
-
-      </div>
-
-      <hr />
-
-      <div className="header-title">
-        <h2>Autorización de publicación</h2>
-        <p>
-          AUTORIZACIÓN DE PUBLICACIÓN DIGITAL Y DECLARACIÓN JURADA DEL TRABAJO DE
-          INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO
-          ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL
-        </p>
-      </div>
-
-    </div>
-
+    <DocumentSection
+      documentData={documentData}
+      setDocumentData={setDocumentData}
+      toggleModalidad={toggleModalidad}
+      selectTipoAcceso={selectTipoAcceso}
+    />
+    <DeclarationSection
+      declaration_title={formData.declaration_title}
+      declaration_text={formData.declaration_text}
+      onChange={handleChange}
+    />
+    <PublicationAuthSection authors={authors} onGeneratePdf={handleGeneratePdf} />
   </div>
 );
 }
