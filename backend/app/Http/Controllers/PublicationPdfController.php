@@ -3,64 +3,82 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Facultad;
+use App\Models\ProgramaAcademico;
 
 class PublicationPdfController extends Controller
 {
     public function generate(Request $request)
     {
         $validated = $request->validate([
-
             'selectedDegree' => 'nullable|string',
-
-            'facultad_escuela' => 'nullable|string',
-            'escuela_carrera' => 'nullable|string',
-            'programa_academico' => 'nullable|string',
+            'facultad_escuela' => 'nullable|integer',
+            'escuela_carrera' => 'nullable',
+            'programa_academico' => 'nullable',
             'titulo_otorga' => 'nullable|string',
-            'grado_otorga' => 'nullable|string',
+            'grado_otorga'  => 'nullable|string',
             'authors' => 'nullable|array',
-            'authors.*.full_name' => 'nullable|string',
-            'authors.*.doc_type' => 'nullable|string',
+            'authors.*.full_name'  => 'nullable|string',
+            'authors.*.doc_type'   => 'nullable|string',
             'authors.*.doc_number' => 'nullable|string',
-            'authors.*.email' => 'nullable|string',
+            'authors.*.email'      => 'nullable|string',
             'advisors' => 'nullable|array',
-            'advisors.*.full_name' => 'nullable|string',
-            'advisors.*.doc_type' => 'nullable|string',
+            'advisors.*.full_name'  => 'nullable|string',
+            'advisors.*.doc_type'   => 'nullable|string',
             'advisors.*.doc_number' => 'nullable|string',
-            'advisors.*.orcid' => 'nullable|string',
+            'advisors.*.orcid'      => 'nullable|string',
             'jurados' => 'nullable|array',
             'documentData' => 'nullable|array',
             'declaration_title' => 'nullable|string',
-            'declaration_text' => 'nullable|string',
-            'fecha' => 'nullable|string',
+            'declaration_text'  => 'nullable|string',
+            'fecha'             => 'nullable|string',
         ]);
-
-        $payload = $request->all();
 
         $defaults = [
             'selectedDegree' => null,
 
-            'facultad_escuela' => 'CIENCIAS ADMINISTRATIVAS Y TURISMO',
-            'escuela_carrera' => null,
-            'programa_academico' => 'CIENCIAS ADMINISTRATIVAS',
-            'titulo_otorga' => 'LICENCIADO EN ADMINISTRACIÓN',
-            'grado_otorga' => null,
+            'facultad_escuela' => '',
+            'escuela_carrera' => '',
+            'programa_academico' => '',
+
+            'titulo_otorga' => '',
+            'grado_otorga' => '',
 
             'authors' => [],
-            'advisors' => [], 
+            'advisors' => [],
             'jurados' => [],
             'documentData' => [],
 
             'declaration_title' => '',
             'declaration_text' => '',
-
             'fecha' => now()->format('d \d\e F Y'),
         ];
 
-        $data = array_merge($defaults, $payload);
+        if (!empty($validated['facultad_escuela']) && is_numeric($validated['facultad_escuela'])) {
+            $facultad = Facultad::find((int)$validated['facultad_escuela']);
+            $validated['facultad_escuela'] = $facultad->nombre ?? $facultad->name ?? '';
+        }
+        if (empty($validated['escuela_carrera']) && !empty($validated['programa_academico'])) {
+            $validated['escuela_carrera'] = $validated['programa_academico'];
+        }
 
+        if (!empty($validated['escuela_carrera']) && is_numeric($validated['escuela_carrera'])) {
+            $programa = ProgramaAcademico::find((int)$validated['escuela_carrera']);
+            $nombrePrograma = $programa->nombre ?? $programa->name ?? '';
+
+            $validated['escuela_carrera'] = $nombrePrograma;
+            $validated['programa_academico'] = $nombrePrograma; 
+        } else {
+            if (!empty($validated['escuela_carrera']) && is_string($validated['escuela_carrera'])) {
+                $validated['programa_academico'] = $validated['escuela_carrera'];
+            }
+        }
+
+        $data = array_merge($defaults, $validated);
+        $data['documentData'] = $validated['documentData'] ?? [];
         $pdf = \PDF::loadView('pdf.publication', $data);
 
-        $fileName = 'Formulario autorizacion derechos';
+        $fileName = 'Formulario_autorizacion_derechos.pdf';
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')

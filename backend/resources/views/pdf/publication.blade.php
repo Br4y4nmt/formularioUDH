@@ -21,7 +21,7 @@
 }
     .logo {
       width: 140px;
-      margin-left: -30mm;  /* ajusta el valor aquí */
+      margin-left: -30mm; 
     }
     .header-center { position:absolute; left:100%; transform:translateX(-50%); top:0; bottom:0; margin:auto; text-align:center; font-size:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
     .header-center .university-title { font-weight:700; font-size:13px; white-space:nowrap; }
@@ -33,7 +33,7 @@
     .auth-table th, .auth-table td { border:1px solid #000; padding:6px; text-align:center; }
     .auth-table th { background:#dbeaf8; }
     .auth-table .x-cell { font-weight:700; }
-    .auth-table td.filled { background:#dbeaf8; }
+
     .doc-box { width:12px; padding:2px; border:1px solid #000; text-align:center; vertical-align:middle; background:transparent; font-size:10px; }
     .doc-box.filled { font-weight:700; }
     .doc-box.wide { width:20px; }
@@ -79,7 +79,6 @@
     }
     .small { font-size:10px; }
     .declaration { border:1px solid #000; padding:8px; text-align:justify; line-height:1.4; }
-    /* Boxed declaration with painted header (used in section 6) */
     .boxed { border:1px solid #000; }
     .boxed-header { background:#dbeaf8; padding:6px 8px; font-weight:700; }
     .boxed-header .table-note { font-weight:400; font-style:italic; margin-left:6px; }
@@ -128,33 +127,34 @@
           <th>Maestro</th>
           <th>Doctor</th>
         </tr>
+        @php $degree = $selectedDegree ?? ''; @endphp
           <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td class="filled">&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
+          <td>@if($degree=='bachiller') X @endif</td>
+          <td>@if($degree=='titulo') X @endif</td>
+          <td class="x-cell">&nbsp;</td>
+          <td>@if($degree=='segunda') X @endif</td>
+          <td>@if($degree=='maestro') X @endif</td>
+          <td>@if($degree=='doctor') X @endif</td>
+        </tr>
       </table>
     </div>
 
     <div class="table-note">Ingrese los datos según corresponda.</div>
     <table class="t-bordered compact-table">
       <tr>
-        <td class="label">Facultad/Escuela</td>
+        <td class="label">Facultad/Escuela:</td>
         <td>{{ $facultad_escuela ?? '' }}</td>
       </tr>
       <tr>
-        <td class="label">Escuela/Carrera Profesional</td>
-        <td>{{ $programa_academico ?? '' }}</td>
+        <td class="label">Escuela/Carrera Profesional:</td>
+        <td>{{ $escuela_carrera ?? $programa_academico ?? '' }}</td>
       </tr>
       <tr>
-        <td class="label">Grado que otorga</td>
+        <td class="label">Grado que otorga:</td>
         <td>{{ $grado_otorga ?? '' }}</td>
       </tr>
       <tr>
-        <td class="label">Título que otorga</td>
+        <td class="label">Título que otorga:</td>
         <td>{{ $titulo_otorga }}</td>
       </tr>
     </table>
@@ -272,42 +272,95 @@
 
       <h2 style="font-size:10px; margin-top:5px;">5. Datos del Documento Digital a Publicar: <span class="table-note">(Ingrese los datos y marque con una "X" según corresponda)</span></h2>
 
-      <table class="t-bordered small compact-table" style="margin-top:-5px;">
-        <tr>
-          <td colspan="8">Ingrese solo el año en el que sustentó su Trabajo de Investigación: <br><small>(Verifique la información en el Acta de Sustentación)</small></td>
-          <td style="text-align:center; width:10%;">{{ $year ?? $anio ?? date('Y') }}</td>
-        </tr>
-        <tr>
-          <td class="label">Modalidad de obtención del Grado Académico o Título Profesional:</td>
-          <td class="doc-label">Trabajo de Investigación</td>
-          <td class="doc-box wide"></td>
-          <td class="doc-label">Tesis</td>
-          <td class="doc-box wide"></td>
-          <td class="doc-label">Trabajo Académico</td>
-          <td class="doc-box wide"></td>
-          <td class="doc-label">Trabajo de Suficiencia Profesional</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="label">Palabras claves</td>
-          <td colspan="8">{{ $palabras_claves ?? $keywords ?? '' }}</td>
-        </tr>
-        <tr>
-          <td class="label">Tipo de acceso:</td>
-          <td class="doc-label">Abierto</td>
-          <td style="width:3%;" class="doc-box">@if(isset($access) && strtolower($access)=='abierto') X @endif</td>
-          <td class="doc-label">Cerrado*</td>
-          <td style="width:3%;" class="doc-box">@if(isset($access) && strtolower($access)=='cerrado') X @endif</td>
-          <td class="doc-label">Restringido*</td>
-          <td style="width:3%;" class="doc-box">@if(isset($access) && strtolower($access)=='restringido') X @endif</td>
-          <td class="doc-label">Periodo de Embargo</td>
-          <td style="width:10%;">{{ $periodo_embargo ?? '' }}</td>
-        </tr>
-        <tr>
-          <td class="label">(*) Sustentar razón:</td>
-          <td colspan="8">{{ $sustentar_razon ?? '' }}</td>
-        </tr>
-      </table>
+@php
+    $doc = $documentData ?? [];
+    $modalidad = $doc['modalidad'] ?? [];
+    $acceso = $doc['tipo_acceso'] ?? [];
+@endphp
+
+<table class="t-bordered small compact-table" style="margin-top:-5px;">
+
+  {{-- Año --}}
+  <tr>
+    <td colspan="8">
+      Ingrese solo el año en el que sustentó su Trabajo de Investigación:
+      <br>
+      <small>(Verifique la información en el Acta de Sustentación)</small>
+    </td>
+    <td style="text-align:center; width:10%;">
+      {{ $doc['year'] ?? date('Y') }}
+    </td>
+  </tr>
+
+  {{-- Modalidad --}}
+  <tr>
+    <td class="label">
+      Modalidad de obtención del Grado Académico o Título Profesional:
+    </td>
+
+    <td class="doc-label">Trabajo de Investigación</td>
+    <td class="doc-box wide">
+      @if(!empty($modalidad['trabajo_investigacion'])) X @endif
+    </td>
+
+    <td class="doc-label">Tesis</td>
+    <td class="doc-box wide">
+      @if(!empty($modalidad['tesis'])) X @endif
+    </td>
+
+    <td class="doc-label">Trabajo Académico</td>
+    <td class="doc-box wide">
+      @if(!empty($modalidad['trabajo_academico'])) X @endif
+    </td>
+
+    <td class="doc-label">Trabajo de Suficiencia Profesional</td>
+    <td class="doc-box wide">
+      @if(!empty($modalidad['trabajo_suficiencia'])) X @endif
+    </td>
+  </tr>
+
+  {{-- Palabras clave --}}
+  <tr>
+    <td class="label">Palabras claves</td>
+    <td colspan="8">
+      {{ $doc['palabras_clave'] ?? '' }}
+    </td>
+  </tr>
+
+  {{-- Tipo de acceso --}}
+  <tr>
+    <td class="label">Tipo de acceso:</td>
+
+    <td class="doc-label">Abierto</td>
+    <td class="doc-box wide">
+      @if(!empty($acceso['abierto'])) X @endif
+    </td>
+
+    <td class="doc-label">Cerrado*</td>
+    <td class="doc-box wide">
+      @if(!empty($acceso['cerrado'])) X @endif
+    </td>
+
+    <td class="doc-label">Restringido*</td>
+    <td class="doc-box wide">
+      @if(!empty($acceso['restringido'])) X @endif
+    </td>
+
+    <td class="doc-label">Periodo de Embargo</td>
+    <td style="width:10%;">
+      {{ $doc['embargo_periodo'] ?? '' }}
+    </td>
+  </tr>
+
+  {{-- Sustentar razón --}}
+  <tr>
+    <td class="label">(*) Sustentar razón:</td>
+    <td colspan="8">
+      {{ $doc['sustentar_razon'] ?? '' }}
+    </td>
+  </tr>
+
+</table>
 
       <h2 style="font-size:10px; margin-top:10px;">6. Declaración Jurada: (Ingrese todos los datos requeridos completos)</h2>
 
@@ -326,7 +379,7 @@
   {{-- Fila 2: Caja del título --}}
   <tr>
     <td style="border:1px solid #000; padding:4px 6px; font-weight:700; height:20px;">
-      {{ strtoupper($work_title ?? $titulo_trabajo ?? $titulo ?? $titulo_otorga ?? '') }}
+      {{ strtoupper($declaration_title ?? '') }}
     </td>
   </tr>
 
@@ -363,15 +416,59 @@
     <p style="margin-top:8px;"><strong>FECHA:</strong> {{ $fecha }}</p>
     <div class="signatures-row">
 
-  <div class="signature-block">
-    <div class="signature-line"></div>
-    V°B° ASESOR(A)
-  </div>
+  @php
+  $asesores = $advisors ?? [];
+@endphp
 
-  <div class="signature-block">
-    <div class="signature-line"></div>
-    V°B° ASESOR(A)
-  </div>
+<table style="width:100%; margin-top:40px; text-align:center;">
+  <tr>
+
+    <td style="width:50%; vertical-align:top;">
+
+      <div style="border-top:1px solid #000; width:70%; margin:0 auto 6px auto;"></div>
+
+      @if(!empty($asesores[0]['full_name']))
+        <div style="font-size:10px; font-weight:600;">
+          {{ strtoupper($asesores[0]['full_name']) }}
+        </div>
+      @endif
+
+      @if(!empty($asesores[0]['doc_number']))
+        <div style="font-size:9px; color:#555;">
+          DNI: {{ $asesores[0]['doc_number'] }}
+        </div>
+      @endif
+
+      <div style="margin-top:4px;">
+        VoB ASESOR(A)
+      </div>
+
+    </td>
+
+    <td style="width:50%; vertical-align:top;">
+
+      <div style="border-top:1px solid #000; width:70%; margin:0 auto 6px auto;"></div>
+
+      @if(!empty($asesores[1]['full_name']))
+        <div style="font-size:10px; font-weight:600;">
+          {{ strtoupper($asesores[1]['full_name']) }}
+        </div>
+      @endif
+
+      @if(!empty($asesores[1]['doc_number']))
+        <div style="font-size:9px; color:#555;">
+          DNI: {{ $asesores[1]['doc_number'] }}
+        </div>
+      @endif
+
+      <div style="margin-top:4px;">
+        VoB ASESOR(A)
+      </div>
+
+    </td>
+
+  </tr>
+</table>
 
 </div>
   </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function AutorSection({ authors, onAuthorChange }) {
   return (
@@ -17,78 +17,83 @@ function AutorSection({ authors, onAuthorChange }) {
                 <td colSpan="5">
                   <input
                     type="text"
-                    name="full_name"
-                    value={author.full_name}
-                    onChange={(e) => onAuthorChange(idx, e)}
+                    value={author.full_name || ""}
+                    onChange={(e) =>
+                      onAuthorChange(idx, "full_name", e.target.value)
+                    }
                     placeholder="Apellidos y Nombres"
                   />
                 </td>
               </tr>
-
               <tr>
                 <td className="label-cell">Tipo de Documento:</td>
+
                 <td>
                   <label>
                     <input
                       type="radio"
-                      name={`doc_type_${idx}`}
-                      data-field="doc_type"
-                      value="dni"
+                      name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "dni"}
-                      onChange={(e) => onAuthorChange(idx, e)}
+                      onChange={() =>
+                        onAuthorChange(idx, "doc_type", "dni")
+                      }
                     />
                     DNI
                   </label>
                 </td>
+
                 <td>
                   <label>
                     <input
                       type="radio"
-                      name={`doc_type_${idx}`}
-                      data-field="doc_type"
-                      value="pasaporte"
+                      name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "pasaporte"}
-                      onChange={(e) => onAuthorChange(idx, e)}
+                      onChange={() =>
+                        onAuthorChange(idx, "doc_type", "pasaporte")
+                      }
                     />
                     Pasaporte
                   </label>
                 </td>
+
                 <td>
                   <label>
                     <input
                       type="radio"
-                      name={`doc_type_${idx}`}
-                      data-field="doc_type"
-                      value="ce"
+                      name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "ce"}
-                      onChange={(e) => onAuthorChange(idx, e)}
+                      onChange={() =>
+                        onAuthorChange(idx, "doc_type", "ce")
+                      }
                     />
                     C.E.
                   </label>
                 </td>
+
                 <td>N° de documento:</td>
+
                 <td>
                   <input
                     type="text"
-                    name="doc_number"
-                    value={author.doc_number}
-                    onChange={(e) => onAuthorChange(idx, e)}
+                    value={author.doc_number || ""}
+                    onChange={(e) =>
+                      onAuthorChange(idx, "doc_number", e.target.value)
+                    }
                     maxLength={author.doc_type === "dni" ? 8 : undefined}
                     inputMode={author.doc_type === "dni" ? "numeric" : "text"}
-                    pattern={author.doc_type === "dni" ? "\\d*" : undefined}
                     placeholder="N° de documento"
                   />
                 </td>
               </tr>
-
               <tr>
                 <td className="label-cell">Correo Electrónico:</td>
                 <td colSpan="5">
                   <input
                     type="email"
-                    name="email"
-                    value={author.email}
-                    onChange={(e) => onAuthorChange(idx, e)}
+                    value={author.email || ""}
+                    onChange={(e) =>
+                      onAuthorChange(idx, "email", e.target.value)
+                    }
                     placeholder="Correo Electrónico"
                   />
                 </td>
@@ -100,4 +105,5 @@ function AutorSection({ authors, onAuthorChange }) {
     </div>
   );
 }
-export default React.memo(AutorSection);
+
+export default AutorSection;

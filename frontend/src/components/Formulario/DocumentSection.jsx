@@ -17,10 +17,17 @@ function DocumentSection({ documentData, setDocumentData, toggleModalidad, selec
             <td className="label-cell">Ingrese solo el año en el que sustentó su Trabajo de Investigación: <span style={{ color: '#929292' }}>(Verifique la Información en el Acta de Sustentación)</span></td>
             <td style={{ width: 120 }}>
               <input
-                type="number"
+                type="text"
                 name="year"
+                className="year-input"
                 value={documentData.year}
-                onChange={(e) => setDocumentData((p) => ({ ...p, year: e.target.value }))}
+                maxLength={4}
+                inputMode="numeric"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setDocumentData((p) => ({ ...p, year: value }));
+                }}
+                
               />
             </td>
           </tr>
@@ -40,6 +47,14 @@ function DocumentSection({ documentData, setDocumentData, toggleModalidad, selec
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input type="checkbox" checked={documentData.modalidad.trabajo_suficiencia} onChange={() => toggleModalidad('trabajo_suficiencia')} />
                   Trabajo de Suficiencia Profesional
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="checkbox"
+                    checked={documentData.modalidad.trabajo_academico}
+                    onChange={() => toggleModalidad('trabajo_academico')}
+                  />
+                  Trabajo Académico
                 </label>
               </div>
             </td>

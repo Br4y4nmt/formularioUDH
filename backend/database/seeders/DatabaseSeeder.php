@@ -12,6 +12,7 @@ public function run(): void
     $this->call([
         FacultadSeeder::class,
         ProgramaAcademicoSeeder::class,
+        ProgramaGradoSeeder::class,
     ]);
 }
 }

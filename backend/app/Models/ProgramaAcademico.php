@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramaAcademico extends Model
 {
-    protected $table = 'programas_academicos'; // 🔥 NECESARIO (plural español)
+    protected $table = 'programas_academicos'; 
 
     protected $fillable = [
         'nombre',
@@ -16,5 +16,9 @@ class ProgramaAcademico extends Model
     public function facultad()
     {
         return $this->belongsTo(Facultad::class);
+    }
+    public function grados()
+    {
+        return $this->hasMany(\App\Models\ProgramaGrado::class, 'programa_id');
     }
 }

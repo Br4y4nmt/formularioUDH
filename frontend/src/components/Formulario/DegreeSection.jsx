@@ -133,9 +133,9 @@ function DegreeSection({
                       type="text"
                       name="titulo_otorga"
                       value={formData.titulo_otorga}
-                      onChange={handleChange}
+                      readOnly
                       disabled={!anySelected || !showGroupA}
-                      placeholder="Título Profesional otorgado"
+                      placeholder="Se completará automáticamente"
                     />
                   </td>
                 </tr>
@@ -145,37 +145,36 @@ function DegreeSection({
           {(anySelected ? showGroupB : true) && (
             <>
               <tr>
-                <td className="label-cell">Programa academico:</td>
-                  <td colSpan="5">
-                    <select
-                      className="table-select"
-                      name="programa_academico"
-                      value={formData.programa_academico}
-                      onChange={handleChange}
-                      disabled={!anySelected || !showGroupB || !formData.facultad_escuela}
-                      required
-                    >
-                      <option value="" disabled>Seleccione Programa</option>
-                      {programas.map((p) => (
-                        <option key={p.id ?? p.value} value={p.id ?? p.value}>
-                          {p.nombre ?? p.label ?? p.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+                <td className="label-cell">Escuela/Carrera Profesional:</td>
+                <td colSpan="5">
+                  <select
+                    className="table-select"
+                    name="escuela_carrera"
+                    value={formData.escuela_carrera}
+                    onChange={handleChange}
+                    disabled={!anySelected || !showGroupB || !formData.facultad_escuela}
+                    required
+                  >
+                    <option value="" disabled>Seleccione Escuela/Carrera</option>
+                    {programas.map((p) => (
+                      <option key={p.id ?? p.value} value={p.id ?? p.value}>
+                        {p.nombre ?? p.label ?? p.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
               </tr>
-
               <tr>
                 <td className="label-cell">Grado que se le otorga:</td>
                 <td colSpan="5">
                   <input
-                    type="text"
-                    name="grado_otorga"
-                    value={formData.grado_otorga}
-                    onChange={handleChange}
-                    disabled={!anySelected || !showGroupB}
-                    placeholder="Grado que otorga"
-                  />
+                      type="text"
+                      name="grado_otorga"
+                      value={formData.grado_otorga}
+                      readOnly
+                      disabled={!anySelected || !showGroupB}
+                      placeholder="Se completará automáticamente"
+                    />
                 </td>
               </tr>
             </>

@@ -2,7 +2,7 @@ import React from 'react';
 import PrinterIcon from '../PrinterIcon';
 import FileTextIcon from '../FileTextIcon';
 
-function PublicationAuthSection({ authors = [], onGeneratePdf }) {
+function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
   const rows = [0, 1];
 
   return (
@@ -70,11 +70,32 @@ function PublicationAuthSection({ authors = [], onGeneratePdf }) {
   <div className="form-actions-row">
 
     <div className="form-actions-left">
-      <button type="button" className="form-btn form-btn-pdf" onClick={onGeneratePdf}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 10 }}>
-          <FileTextIcon size={16} />
-        </span>
-        Generar PDF
+      <button
+        type="button"
+        className="form-btn form-btn-pdf"
+        onClick={onGeneratePdf}
+        disabled={isGenerating}
+        style={{
+          opacity: isGenerating ? 0.7 : 1,
+          cursor: isGenerating ? "not-allowed" : "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8
+        }}
+      >
+        {isGenerating ? (
+          <>
+            <span className="spinner"></span>
+            Generando...
+          </>
+        ) : (
+          <>
+            <FileTextIcon size={16} />
+            Generar PDF
+          </>
+        )}
+
       </button>
     </div>
 

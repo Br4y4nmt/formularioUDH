@@ -452,3 +452,26 @@
   background-color: #ffffff;
   color: #1f2937;
 }
+.swal2-toast-custom {
+  border-radius: 12px !important;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+input[readonly] {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
