@@ -34,7 +34,7 @@ function Formulario() {
     titulo_otorga: "",
     grado_otorga: "",
     declaration_title: "",
-    declaration_text: `Mediante la presente asumo frente a la Universidad Nacional Hermilio Valdizán (en adelante LA UNIVERSIDAD), cualquier responsabilidad que pueda derivarse por la autoría, originalidad y veracidad del contenido del trabajo de investigación y/o tomo por los derechos de la obra y/o invención presentada. En consecuencia, me hago responsable frente a LA UNIVERSIDAD y frente a terceros de cualquier daño que pudiera ocasionar a LA UNIVERSIDAD o a terceros, por el incumplimiento de lo declarado o que pudiera encontrar causas en los trabajos de investigación presentado, asumiendo toda la carga pecuniaria que pudiera derivarse de ello. Asimismo, por la presente me comprometo a asumir además todas las cargas pecuniarias que pudieran derivar para LA UNIVERSIDAD en favor de terceros por motivos de acciones, reclamaciones o conflictos derivados del incumplimiento de lo declarado o las que encontraran causa en el contenido del Trabajo de Investigación. De identificarse fraude, piratería, plagio, falsificación o que el trabajo haya sido publicado anteriormente; asumo las consecuencias y sanciones que de mis acciones se deriven, sometiéndome a las acciones legales y administrativas vigentes.`,
+    declaration_text: `Por medio de este documento, declaro bajo juramento que el presente trabajo de investigación es de mi exclusiva autoría, original y veraz. Por tanto, asumo ante la Universidad de Huánuco toda responsabilidad sobre los derechos de la obra. Asimismo, eximo a la institución de cualquier reclamo legal o conflicto impulsado por terceros, comprometiéndome a cubrir los gastos o daños económicos que pudieran generarse por el incumplimiento de esta declaración. En caso de detectarse plagio, fraude, falsificación de datos o publicación previa, acepto someterme a las sanciones disciplinarias, administrativas y legales correspondientes.`,
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [facultades, setFacultades] = useState([]);
@@ -52,7 +52,6 @@ function Formulario() {
       { role: "Presidente", name: "" },
       { role: "Secretario", name: "" },
       { role: "Vocal", name: "" },
-      { role: "Accesitario", name: "" },
     ]);
 
   const [documentData, setDocumentData] = useState({
@@ -95,12 +94,22 @@ const toggleModalidad = useCallback((key) => {
   }));
 }, []);
 
-  const selectTipoAcceso = useCallback((key) => {
-    setDocumentData((prev) => ({
-      ...prev,
-      tipo_acceso: { abierto: false, cerrado: false, restringido: false, [key]: true },
-    }));
-  }, []);
+const selectTipoAcceso = useCallback((key) => {
+  setDocumentData((prev) => ({
+    ...prev,
+    tipo_acceso: {
+      abierto: false,
+      cerrado: false,
+      restringido: false,
+      embargo: {
+        activo: false,
+        fecha_inicio: "",
+        fecha_fin: ""
+      },
+      [key]: true
+    }
+  }));
+}, []);
 
 
   const selectDegree = useCallback((key) => {
@@ -306,53 +315,6 @@ const handleAdvisorChange = useCallback((index, name, value) => {
 
 const handleGeneratePdf = useCallback(async () => {
 
-  if (isGenerating) return;
-
-  // 🔎 ================= VALIDACIONES =================
-
-  if (!formData.selectedDegree) {
-    showTopWarningToast("Seleccione el grado o título");
-    return;
-  }
-
-  if (!formData.facultad_escuela) {
-    showTopWarningToast("Seleccione la facultad");
-    return;
-  }
-
-  if (!formData.escuela_carrera) {
-    showTopWarningToast("Seleccione la escuela o programa");
-    return;
-  }
-
-  if (!formData.declaration_title) {
-    showTopWarningToast("Ingrese el título del trabajo");
-    return;
-  }
-
-  if (!documentData.year || documentData.year.length !== 4) {
-    showTopWarningToast("Ingrese un año válido de 4 dígitos");
-    return;
-  }
-
-  const algunaModalidad = Object.values(documentData.modalidad).some(v => v);
-  if (!algunaModalidad) {
-    showTopWarningToast("Seleccione la modalidad");
-    return;
-  }
-
-  const algunAcceso = Object.values(documentData.tipo_acceso).some(v => v);
-  if (!algunAcceso) {
-    showTopWarningToast("Seleccione el tipo de acceso");
-    return;
-  }
-
-  const autorValido = authors.some(a => a.full_name);
-  if (!autorValido) {
-    showTopWarningToast("Ingrese al menos un autor");
-    return;
-  }
-
   try {
 
     setIsGenerating(true);
@@ -425,7 +387,7 @@ const handleGeneratePdf = useCallback(async () => {
     setIsGenerating(false);
   }
 
-}, [formData, authors, advisors, jurados, documentData, isGenerating]);
+}, [formData, authors, advisors, jurados, documentData]);
 
   return (
   <div className="form-container">

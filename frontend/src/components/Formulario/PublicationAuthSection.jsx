@@ -10,13 +10,13 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
       <div className="section-title"><strong>7. Autorización de Publicación Digital</strong></div>
 
       <div className="declaration-box small-text" style={{ margin: 12 }}>
-        A través de la presente autorizo de manera gratuita a la Universidad Nacional Hermilio Valdizán a publicar la versión digital de este trabajo de investigación en su biblioteca virtual, repositorio institucional y base de datos, por el plazo especificado permitiendo que con dicha autorización cualquier tercero podrá acceder a dichas páginas de manera gratuita pudiendo revisarla, imprimirla o grabarla siempre cuando se respete la autoría y sea citada correctamente.
+         Mediante el presente documento, otorgo mi consentimiento expreso y gratuito a la Universidad de Huánuco para que publique, difunda y ponga a disposición del público la versión digital de mi trabajo de investigación a través de su repositorio institucional, biblioteca virtual y bases de datos académicas.
       </div>
 
       <table className="form-table" style={{ margin: 12 }}>
         <thead>
           <tr>
-            <th>Apellidos y Nombres</th>
+            <th>Nombres completos del autor(a)</th>
             <th>Firma</th>
             <th>Firma Digital / Huella</th>
           </tr>

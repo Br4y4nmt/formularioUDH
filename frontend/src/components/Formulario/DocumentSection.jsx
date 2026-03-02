@@ -1,24 +1,100 @@
 import React from 'react';
 import CheckIcon from '../CheckIcon';
 
-function DocumentSection({ documentData, setDocumentData, toggleModalidad, selectTipoAcceso }) {
+function DocumentSection({
+  documentData,
+  setDocumentData,
+  toggleModalidad,
+  selectTipoAcceso
+}) {
+
+  let mensajes = [];
+  let colorBorde = "#1976d2";
+
+  if (documentData.tipo_acceso.abierto) {
+    mensajes.push(
+      "El acceso abierto implica la disponibilidad libre y gratuita del texto completo en Internet, permitiendo su lectura, descarga y consulta sin restricciones técnicas, económicas o administrativas."
+    );
+    mensajes.push(
+      "Este principio se adopta en concordancia con las buenas prácticas nacionales e internacionales de acceso abierto promovidas por el sistema ALICIA, garantizando la visibilidad, preservación y difusión del conocimiento académico generado por la Universidad."
+    );
+    colorBorde = "#2e7d32";
+  }
+
+  if (documentData.tipo_acceso.cerrado) {
+    mensajes.push(
+      "Consiste en la no disponibilidad pública del texto completo, mostrando únicamente los metadatos."
+    );
+    mensajes.push(
+      <div>
+        <div>Procede únicamente cuando:</div>
+        <ul style={{ margin: '6px 0 0 18px' }}>
+          <li>Exista mandato legal expreso que impida su difusión.</li>
+          <li>Se haya acreditado cesión exclusiva de derechos que prohíba su publicación.</li>
+          <li>Exista impedimento jurídico debidamente sustentado.</li>
+        </ul>
+      </div>
+    );
+    colorBorde = "#d32f2f";
+  }
+
+  if (documentData.tipo_acceso.restringido) {
+    mensajes.push(
+      "Consiste en permitir el acceso únicamente a usuarios autorizados o a la comunidad universitaria."
+    );
+    mensajes.push(
+      <div>
+        <div>Procede cuando la tesis contenga:</div>
+        <ul style={{ margin: '6px 0 0 18px' }}>
+          <li>Datos personales sensibles.</li>
+          <li>Información clínica identificable.</li>
+        </ul>
+      </div>
+    );
+    colorBorde = "#f57c00";
+  }
+
+  if (documentData.tipo_acceso.embargo?.activo) {
+    mensajes.push(
+      "Consiste en la restricción del acceso al texto completo por un plazo determinado, manteniéndose visibles los metadatos."
+    );
+    mensajes.push(
+      <div>
+        <div>Procede cuando:</div>
+        <ul style={{ margin: '6px 0 0 18px' }}>
+          <li>La tesis será sometida a publicación en revista científica que exija embargo.</li>
+          <li>Exista proceso de patente o protección de propiedad intelectual en trámite.</li>
+          <li>Medie convenio con cláusula de confidencialidad temporal.</li>
+          <li>Existan razones académicas debidamente sustentadas.</li>
+        </ul>
+      </div>
+    );
+  }
+
   return (
     <div className="section-card">
+
       <div className="section-title">
         <strong>5. Datos del Documento Digital a Publicar:</strong>
         <span> (Ingrese sus datos y marque con un </span>
-        <span style={{display:'inline-flex', verticalAlign:'middle'}}><CheckIcon size={14} /></span>
+        <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+          <CheckIcon size={14} />
+        </span>
         <span> según corresponda)</span>
       </div>
 
       <table className="form-table">
         <tbody>
           <tr>
-            <td className="label-cell">Ingrese solo el año en el que sustentó su Trabajo de Investigación: <span style={{ color: '#929292' }}>(Verifique la Información en el Acta de Sustentación)</span></td>
+            <td className="label-cell">
+              Ingrese solo el año en el que sustentó su Trabajo de Investigación:
+              <span style={{ color: '#929292' }}>
+                (Verifique la Información en el Acta de Sustentación)
+              </span>
+            </td>
             <td style={{ width: 120 }}>
               <input
                 type="text"
-                name="year"
                 className="year-input"
                 value={documentData.year}
                 maxLength={4}
@@ -27,60 +103,167 @@ function DocumentSection({ documentData, setDocumentData, toggleModalidad, selec
                   const value = e.target.value.replace(/\D/g, "").slice(0, 4);
                   setDocumentData((p) => ({ ...p, year: value }));
                 }}
-                
               />
             </td>
           </tr>
 
           <tr>
-            <td className="label-cell narrow-label">Modalidad de obtención del Grado Académico o Título Profesional<br/>(Marque según corresponda)</td>
+            <td className="label-cell narrow-label">
+              Modalidad de obtención del Grado Académico o Título Profesional:
+              <span style={{ color: '#929292' }}>(Marque según corresponda)</span>
+            </td>
             <td colSpan="5">
-              <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.modalidad.trabajo_investigacion} onChange={() => toggleModalidad('trabajo_investigacion')} />
-                  Trabajo de Investigación
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.modalidad.tesis} onChange={() => toggleModalidad('tesis')} />
-                  Tesis
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.modalidad.trabajo_suficiencia} onChange={() => toggleModalidad('trabajo_suficiencia')} />
-                  Trabajo de Suficiencia Profesional
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+                {Object.keys(documentData.modalidad).map((key) => (
+                  <label key={key} style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={documentData.modalidad[key]}
+                      onChange={() => toggleModalidad(key)}
+                    />
+                    {key.replaceAll("_", " ")}
+                  </label>
+                ))}
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td className="label-cell narrow-label">
+              Tipo de acceso:
+              <span style={{ color: '#929292' }}>
+                (Marque con X según corresponda)
+              </span>
+            </td>
+
+            <td colSpan="5">
+              <div style={{
+                display: 'flex',
+                gap: '20px',
+                alignItems: 'center',
+                flexWrap: 'wrap'
+              }}>
+
+                <label style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                   <input
                     type="checkbox"
-                    checked={documentData.modalidad.trabajo_academico}
-                    onChange={() => toggleModalidad('trabajo_academico')}
+                    checked={documentData.tipo_acceso.abierto}
+                    onChange={() => selectTipoAcceso('abierto')}
                   />
-                  Trabajo Académico
-                </label>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td className="label-cell narrow-label">Tipo de acceso:<br/>(Marque con X según corresponda)</td>
-            <td colSpan="5">
-              <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.tipo_acceso.abierto} onChange={() => selectTipoAcceso('abierto')} />
                   Abierto
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.tipo_acceso.cerrado} onChange={() => selectTipoAcceso('cerrado')} />
+
+                <label style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={documentData.tipo_acceso.cerrado}
+                    onChange={() => selectTipoAcceso('cerrado')}
+                  />
                   Cerrado*
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" checked={documentData.tipo_acceso.restringido} onChange={() => selectTipoAcceso('restringido')} />
+
+                <label style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={documentData.tipo_acceso.restringido}
+                    onChange={() => selectTipoAcceso('restringido')}
+                  />
                   Restringido*
                 </label>
+
+
+                <label style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    checked={documentData.tipo_acceso.embargo?.activo}
+                    disabled={documentData.tipo_acceso.abierto}
+                    onChange={() =>
+                      setDocumentData((p) => ({
+                        ...p,
+                        tipo_acceso: {
+                          abierto: false,
+                          cerrado: false,
+                          restringido: false,
+                          embargo: {
+                            ...p.tipo_acceso.embargo,
+                            activo: !p.tipo_acceso.embargo?.activo
+                          }
+                        }
+                      }))
+                    }
+                  />
+                  Periodo de embargo
+                </label>
+
               </div>
             </td>
           </tr>
+
         </tbody>
       </table>
+
+      {mensajes.length > 0 && (
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "14px 18px",
+            backgroundColor: "#f9f9f9",
+            borderLeft: `5px solid ${colorBorde}`,
+            borderRadius: "6px",
+            fontSize: "14px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px"
+          }}
+        >
+          {mensajes.map((msg, i) => (
+            <div key={i}>{msg}</div>
+          ))}
+
+          {documentData.tipo_acceso.embargo?.activo && (
+            <div style={{ display: "flex", gap: "20px", marginTop: "10px", alignItems: 'center' }}>
+              <div style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "12px",
+                  flexWrap: "wrap"
+                }}>
+                  <label style={{ whiteSpace: "nowrap", fontWeight: 500 }}>
+                  Tiempo de Embargo por:
+                </label>
+                <select
+                  className="select-modern"
+                  style={{ width: "180px" }}
+                  value={documentData.embargo_periodo ?? documentData.tipo_acceso.embargo?.periodo ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDocumentData((p) => ({
+                      ...p,
+                      embargo_periodo: val,
+                      tipo_acceso: {
+                        ...p.tipo_acceso,
+                        embargo: {
+                          ...p.tipo_acceso.embargo,
+                          periodo: val
+                        }
+                      }
+                    }));
+                  }}
+                >
+                  <option value="">Seleccione</option>
+                  <option value="6">6 meses</option>
+                  <option value="18">18 meses</option>
+                  <option value="24">24 meses</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
     </div>
   );
 }
+
 export default React.memo(DocumentSection);
