@@ -8,13 +8,13 @@ function Header() {
 
       <div className="header-top">
         <div>UNIVERSIDAD DE HUÁNUCO</div>
-        <div>SECRETARIADO VICERRECTORADO ACADÉMICO</div>
+        <div>VICERRECTORADO DE INVESTIGACION</div>
       </div>
 
       <div className="header-middle">
 
         <div className="logo-section">
-          <img src="/images/Logo.png" alt="Logo Universidad" />
+          <img src="/formulario/images/Logo.png" alt="Logo Universidad" />
         </div>
 
         <div className="header-text">
