@@ -1,50 +1,107 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import Swal from "sweetalert2";
+import { openWhatsApp } from "../../services/contact";
 
-function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni }) {
+function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone = "51952068664", contactMessage = "Hola, necesito que registren a mi asesor en el sistema." }) {
 
   const [dniInputs, setDniInputs] = useState({});
+  const dniRefs = useRef({});
 
   const handleDniChange = (index, value) => {
     const clean = value.replace(/\D/g, "").slice(0, 8);
     setDniInputs(prev => ({ ...prev, [index]: clean }));
+    const input = dniRefs.current[index];
+    if (input) input.setCustomValidity("");
+  };
+
+  const handleBuscar = async (index) => {
+    const dni = dniInputs[index] || "";
+    // Si el campo DNI está vacío, mostrar validación nativa del input y no ejecutar la búsqueda
+    if (!dni) {
+      const input = dniRefs.current[index];
+      if (input) {
+        // establecer mensaje temporal y forzar reporte de validez
+        input.setCustomValidity("Por favor complete el campo DNI.");
+        input.reportValidity();
+        // limpiar el custom validity en el siguiente tick para que la validación funcione después
+        setTimeout(() => input.setCustomValidity(""), 0);
+        input.focus();
+        return;
+      }
+
+      window.alert("Por favor complete el campo DNI.");
+      return;
+    }
+
+    // Validar longitud exacta de 8 dígitos
+    if (dni.length !== 8) {
+      const input = dniRefs.current[index];
+      if (input) {
+        input.setCustomValidity("El DNI debe tener 8 dígitos.");
+        input.reportValidity();
+        setTimeout(() => input.setCustomValidity(""), 0);
+        input.focus();
+        return;
+      }
+
+      window.alert("El DNI debe tener 8 dígitos.");
+      return;
+    }
+
+    if (!onBuscarDni) return;
+
+    try {
+      const result = onBuscarDni(index, dni);
+      const resolved = result && typeof result.then === "function" ? await result : result;
+
+      if (!resolved) {
+        const swalResult = await Swal.fire({
+          icon: "warning",
+          title: "Asesor no encontrado",
+          text: "Asesor no encontrado, comuníquese con el área para agregar a su asesor.",
+          confirmButtonText: "Comunicarse",
+        });
+
+        if (swalResult && swalResult.isConfirmed) {
+          openWhatsApp(contactPhone, contactMessage);
+        }
+      }
+    } catch (error) {
+      console.error("Error buscando asesor:", error);
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error al buscar el asesor.",
+        confirmButtonText: "Cerrar",
+      });
+    }
   };
 
   const renderAdvisor = (advisor, index) => (
     <tbody key={index}>
       <tr>
-        <td
-          colSpan="6"
-          style={{
-            background: "#f7f8fa",
-            fontWeight: "600",
-            textAlign: "left",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px 15px"
-          }}
-        >
+        <td colSpan="6" className="advisor-header-cell">
           <span>
             {index === 0 ? "Asesor Metodológico" : "Asesor Técnico"}
           </span>
 
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="advisor-actions">
             <input
               type="text"
               placeholder="DNI"
               value={dniInputs[index] || ""}
               onChange={(e) => handleDniChange(index, e.target.value)}
-              style={{
-                width: 100,
-                padding: "6px 8px",
-                borderRadius: 6,
-                border: "1px solid #cfd6dd"
-              }}
+              className="advisor-dni-input"
+              ref={(el) => (dniRefs.current[index] = el)}
+              required
+              inputMode="numeric"
+              pattern="\d{8}"
+              maxLength={8}
             />
 
             <button
               type="button"
-              onClick={() => onBuscarDni(index, dniInputs[index])}
+              onClick={() => handleBuscar(index)}
               className="btn-search"
             >
               Buscar

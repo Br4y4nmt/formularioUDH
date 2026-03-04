@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CheckIcon from '../CheckIcon';
 
 function DocumentSection({
@@ -7,6 +7,29 @@ function DocumentSection({
   toggleModalidad,
   selectTipoAcceso
 }) {
+
+  useEffect(() => {
+    const ta = documentData?.tipo_acceso;
+    const noneSelected =
+      !ta ||
+      (!ta.abierto && !ta.cerrado && !ta.restringido && !ta.embargo?.activo);
+
+    if (noneSelected) {
+      setDocumentData((p) => ({
+        ...p,
+        tipo_acceso: {
+          abierto: true,
+          cerrado: false,
+          restringido: false,
+          embargo: {
+            ...(p?.tipo_acceso?.embargo || {}),
+            activo: false,
+          },
+        },
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentData?.tipo_acceso, setDocumentData]);
 
   let mensajes = [];
   let colorBorde = "#1976d2";
@@ -203,19 +226,7 @@ function DocumentSection({
       </table>
 
       {mensajes.length > 0 && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "14px 18px",
-            backgroundColor: "#f9f9f9",
-            borderLeft: `5px solid ${colorBorde}`,
-            borderRadius: "6px",
-            fontSize: "14px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px"
-          }}
-        >
+        <div className="access-messages" style={{ borderLeftColor: colorBorde }}>
           {mensajes.map((msg, i) => (
             <div key={i}>{msg}</div>
           ))}
