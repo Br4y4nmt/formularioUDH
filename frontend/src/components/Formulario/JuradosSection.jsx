@@ -5,7 +5,7 @@ function JuradosSection({ jurados, onJuradoChange }) {
     <div className="section-card">
       <div className="section-title-yellow">
         <strong>4. Datos de los Jurados:</strong>
-        <span> (Ingrese sus datos según corresponda, primero apellidos luego nombre)</span>
+        <span> (Ingrese los datos de los jurados que firmarón su acta de sustentación)</span>
       </div>
 
       <table className="form-table">

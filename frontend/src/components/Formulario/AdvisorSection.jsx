@@ -45,15 +45,7 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni }) {
             <button
               type="button"
               onClick={() => onBuscarDni(index, dniInputs[index])}
-              style={{
-                padding: "6px 12px",
-                borderRadius: 6,
-                border: "none",
-                background: "#39B49E",
-                color: "#fff",
-                cursor: "pointer",
-                fontWeight: 500
-              }}
+              className="btn-search"
             >
               Buscar
             </button>

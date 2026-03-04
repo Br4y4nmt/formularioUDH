@@ -94,6 +94,7 @@
     ul.notes { margin:6px 0 0 18px; }
     .top-lines { margin-top:-40px; text-align:center; font-size:10px; color:#444; margin-bottom:6px; }
     .top-lines .line { margin:2px 0; }
+    .page-break { page-break-before: always; break-before: page; }
   </style>
 </head>
 <body>
@@ -134,19 +135,19 @@
     <table class="t-bordered small compact-table">
       <tr>
         <td class="label">Facultad/Escuela:</td>
-        <td>{{ $facultad_escuela ?? '' }}</td>
+        <td>{{ strtoupper($facultad_escuela ?? '') }}</td>
       </tr>
       <tr>
         <td class="label">Escuela/Carrera Profesional:</td>
-        <td>{{ $escuela_carrera ?? $programa_academico ?? '' }}</td>
+        <td>{{ strtoupper($escuela_carrera ?? $programa_academico ?? '') }}</td>
       </tr>
       <tr>
         <td class="label">Grado que otorga:</td>
-        <td>{{ $grado_otorga ?? '' }}</td>
+        <td>{{ strtoupper($grado_otorga ?? '') }}</td>
       </tr>
       <tr>
         <td class="label">Título que otorga:</td>
-        <td>{{ $titulo_otorga }}</td>
+        <td>{{ strtoupper($titulo_otorga ?? '') }}</td>
       </tr>
     </table>
 
@@ -157,7 +158,7 @@
         @php $dt = strtolower($a['doc_type'] ?? $a['tipo_documento'] ?? ''); @endphp
         <tr>
           <td style="width:18%"><strong>Apellidos y Nombres:</strong></td>
-          <td colspan="8">{{ $a['full_name'] ?? '' }}</td>
+          <td colspan="8">{{ strtoupper($a['full_name'] ?? '') }}</td>
         </tr>
         <tr>
           <td><strong>Tipo de Documento:</strong></td>
@@ -168,7 +169,7 @@
           <td class="doc-label" style="width:8%">C.E.</td>
           <td style="width:3%;" class="doc-box @if(strpos($dt,'c.e') !== false || strpos($dt,'ce') !== false) filled @endif">@if(strpos($dt,'c.e') !== false || strpos($dt,'ce') !== false) X @endif</td>
           <td class="doc-label" style="width:12%"><strong>N° de Documento:</strong></td>
-          <td style="width:10%;">{{ $a['doc_number'] ?? '' }}</td>
+          <td style="width:10%;">{{ strtoupper($a['doc_number'] ?? '') }}</td>
         </tr>
         <tr>
           <td><strong>Correo Electrónico:</strong></td>
@@ -199,7 +200,7 @@
 
   <tr>
     <td style="width:18%"><strong>Apellidos y Nombres:</strong></td>
-    <td colspan="8">{{ $s['full_name'] ?? '' }}</td>
+    <td colspan="8">{{ strtoupper($s['full_name'] ?? '') }}</td>
   </tr>
 
   <tr>
@@ -225,13 +226,13 @@
     </td>
 
     <td style="width:10%;">
-      {{ $s['doc_number'] ?? '' }}
+      {{ strtoupper($s['doc_number'] ?? '') }}
     </td>
   </tr>
 
   <tr>
     <td><strong>ORCID ID:</strong></td>
-    <td colspan="8">{{ $s['orcid'] ?? '' }}</td>
+    <td colspan="8">{{ strtoupper($s['orcid'] ?? '') }}</td>
   </tr>
 
 @endforeach
@@ -246,15 +247,15 @@
       <table class="t-bordered small compact-table" style="margin-top:-5px;">
         <tr>
           <td class="label" style="width:18%">Presidente</td>
-          <td colspan="8">{{ $j[0]['name'] ?? '' }}</td>
+          <td colspan="8">{{ strtoupper($j[0]['name'] ?? '') }}</td>
         </tr>
         <tr>
           <td class="label">Secretario</td>
-          <td colspan="8">{{ $j[1]['name'] ?? '' }}</td>
+          <td colspan="8">{{ strtoupper($j[1]['name'] ?? '') }}</td>
         </tr>
         <tr>
           <td class="label">Vocal</td>
-          <td colspan="8">{{ $j[2]['name'] ?? '' }}</td>
+          <td colspan="8">{{ strtoupper($j[2]['name'] ?? '') }}</td>
         </tr>
       </table>
 
@@ -310,7 +311,7 @@
   <tr>
     <td class="label">Palabras claves</td>
     <td colspan="8">
-      {{ $doc['palabras_clave'] ?? '' }}
+      {{ strtoupper($doc['palabras_clave'] ?? '') }}
     </td>
   </tr>
 
@@ -370,7 +371,7 @@
   <tr>
     <td class="label">(*) Sustentar razón:</td>
     <td colspan="8">
-      {{ $doc['sustentar_razon'] ?? '' }}
+      {{ strtoupper($doc['sustentar_razon'] ?? '') }}
     </td>
   </tr>
 
@@ -421,7 +422,7 @@
           </ul>
           @if(!empty($embargoDisplay))
             <div style="margin-top:6px;">
-              <strong>Tiempo de Embargo:</strong> {{ $embargoDisplay }}
+              <strong>Tiempo de Embargo:</strong> {{ strtoupper($embargoDisplay) }}
             </div>
           @endif
         @endif
@@ -432,7 +433,8 @@
 
 </table>
 
-  <h2 style="font-size:10px; margin-top:10px;">6. Declaración Jurada:(Ingrese todos los datos requeridos completos)</h2>
+  <div class="page-break"></div>
+  <h2 style="font-size:10px; margin-top:0px;">6. Declaración Jurada:(Ingrese todos los datos requeridos completos)</h2>
 
 <table style="width:100%; border-collapse:collapse; margin-top:-5px;">
     <tr>
@@ -445,7 +447,7 @@
   </tr>
   <tr>
     <td style="border:1px solid #000; padding:6px; font-weight:700; box-sizing:border-box; white-space:normal; overflow-wrap:break-word; word-break:break-word; font-size:10px;">
-      {{ $declaration_title ?? '' }}
+      {{ strtoupper($declaration_title ?? '') }}
     </td>
   </tr>
   <tr>
@@ -472,7 +474,7 @@
       @for($i=0;$i<2;$i++)
         <tr>
           <td class="label" style="width:35%" >Nombres completos del autor(a)</td>
-          <td class="name">{{ $authors[$i]['full_name'] ?? '' }}</td>
+          <td class="name">{{ strtoupper($authors[$i]['full_name'] ?? '') }}</td>
           <td class="firma-label">Firma</td>
           <td class="signature"></td>
         </tr>
@@ -486,7 +488,7 @@
   $asesores = $advisors ?? [];
 @endphp
 
-<table style="width:100%; margin-top:-30px; text-align:center;">
+<table style="width:100%; margin-top: 20px; text-align:center;">
   <tr>
 
     <td style="width:50%; vertical-align:top;">
@@ -501,13 +503,13 @@
 
       @if(!empty($asesores[0]['doc_number']))
         <div style="font-size:9px; color:#555;">
-          DNI: {{ $asesores[0]['doc_number'] }}
+          DNI: {{ strtoupper($asesores[0]['doc_number'] ?? '') }}
         </div>
       @endif
 
       @if(!empty($asesores[0]['orcid']))
         <div style="font-size:9px; color:#555;">
-          ORCID: {{ $asesores[0]['orcid'] }}
+          ORCID: {{ strtoupper($asesores[0]['orcid'] ?? '') }}
         </div>
       @endif
 
@@ -529,13 +531,13 @@
 
       @if(!empty($asesores[1]['doc_number']))
         <div style="font-size:9px; color:#555;">
-          DNI: {{ $asesores[1]['doc_number'] }}
+          DNI: {{ strtoupper($asesores[1]['doc_number'] ?? '') }}
         </div>
       @endif
 
       @if(!empty($asesores[1]['orcid']))
         <div style="font-size:9px; color:#555;">
-          ORCID: {{ $asesores[1]['orcid'] }}
+          ORCID: {{ strtoupper($asesores[1]['orcid'] ?? '') }}
         </div>
       @endif
 

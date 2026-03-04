@@ -17,11 +17,6 @@ function Header() {
           <img src="/formulario/images/Logo.png" alt="Logo Universidad" />
         </div>
 
-        <div className="header-text">
-          <p>"Decenio de la Igualdad de Oportunidades para Mujeres y Hombres"</p>
-          <p>"Año de la Recuperación y Consolidación de la Economía Peruana"</p>
-        </div>
-
         <div className="header-icons">
             <div className="icon blue">
             <GraduationIcon size={28} color="#39B49E" />
@@ -32,8 +27,6 @@ function Header() {
         </div>
 
       </div>
-
-      <div className="custom-divider"></div>
 
       <div className="header-title">
         <h2>Autorización de publicación</h2>

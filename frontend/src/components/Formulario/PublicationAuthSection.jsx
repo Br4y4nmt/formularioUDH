@@ -57,10 +57,7 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
       <div className="note-box">
         <strong>Nota:</strong>
         <ul>
-          <li>No modificar los textos preestablecidos, conservar la estructura del documento.</li>
-          <li>Marque con una X en el recuadro que corresponde.</li>
-          <li>Llene cada dato del mismo tipo de letra Calibri, tamaño de fuente 09, manteniendo la alineación del texto que observa en el modelo, sin errores gramaticales (recuerde las mayúsculas también se tildan si corresponde).</li>
-          <li>La información requerida presenta su inscripción definitiva que será registrada en los demás archivos y/o formatos que presente, tales como: DNI, Acta de Sustentación, Trabajo de Investigación (PDF), Constancia de Similitud, Reporte de Similitud.</li>
+          
           <li>Cada uno de los datos requeridos en este formato, es de carácter obligatorio según corresponda.</li>
           <li>Se debe de imprimir, firmar y luego escanear el documento (legible).</li>
         </ul>

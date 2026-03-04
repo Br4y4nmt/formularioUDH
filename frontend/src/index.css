@@ -54,6 +54,20 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Reusable search button style */
+.btn-search {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #39B49E;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-search:hover {
+  filter: brightness(0.95);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
