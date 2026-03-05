@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Swal from "sweetalert2";
 import { openWhatsApp } from "../../services/contact";
 
-function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone = "51952068664", contactMessage = "Hola, necesito que registren a mi asesor en el sistema." }) {
+function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone = "51952068664", contactMessage = "Hola, necesito que registren a mi asesor/jurado en el formulario de autorización. Estos son sus datos:  " }) {
 
   const [dniInputs, setDniInputs] = useState({});
   const dniRefs = useRef({});
