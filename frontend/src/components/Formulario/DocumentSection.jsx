@@ -67,10 +67,22 @@ function DocumentSection({
     );
     mensajes.push(
       <div>
-        <div>Procede cuando la tesis contenga:</div>
+        <div>Procede de manera excepcional cuando la tesis contenga:</div>
         <ul style={{ margin: '6px 0 0 18px' }}>
-          <li>Datos personales sensibles.</li>
-          <li>Información clínica identificable.</li>
+          <li>Datos personales sensibles o información clínica identificable cuya anonimización o disociación resulte técnica o metodológicamente imposible sin destruir el valor académico, científico o de contexto de la obra.
+
+            <ul>
+                    <li>
+              *Información empresarial o estratégica sujeta a reserva (con convenios de confidencialidad vigentes). 
+
+          </li>
+          <li>
+              *Información cuya divulgación irrestricta pueda afectar derechos de terceros debidamente comprobados. 
+
+          </li>
+            </ul>
+          </li>
+    
         </ul>
       </div>
     );
@@ -88,7 +100,7 @@ function DocumentSection({
           <li>La tesis será sometida a publicación en revista científica que exija embargo.</li>
           <li>Exista proceso de patente o protección de propiedad intelectual en trámite.</li>
           <li>Medie convenio con cláusula de confidencialidad temporal.</li>
-          <li>Existan razones académicas debidamente sustentadas.</li>
+         
         </ul>
       </div>
     );
@@ -266,6 +278,9 @@ function DocumentSection({
                   <option value="18">18 meses</option>
                   <option value="24">24 meses</option>
                 </select>
+                <label style={{ whiteSpace: "nowrap", fontWeight: 500 }}>
+                  El periodo inicia desde la atención del Trámite correspondiente.
+                </label>
               </div>
             </div>
           )}
