@@ -29,9 +29,9 @@ function Header() {
       </div>
 
       <div className="header-title">
-        <h2>Autorización de publicación</h2>
+        <h2>Formulario de Autorización de Publicación</h2>
         <p>
-          AUTORIZACIÓN DE PUBLICACIÓN DIGITAL Y DECLARACIÓN JURADA DEL TRABAJO DE
+          PARA TRABAJOS DE
           INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO
           ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL
         </p>
