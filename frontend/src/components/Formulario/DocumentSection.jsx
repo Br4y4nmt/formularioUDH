@@ -131,7 +131,7 @@ function DocumentSection({
               <input
                 type="text"
                 className="year-input"
-                value={documentData.year}
+                value={documentData.year || ""}
                 maxLength={4}
                 inputMode="numeric"
                 onChange={(e) => {
@@ -210,7 +210,7 @@ function DocumentSection({
                 <label style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                   <input
                     type="checkbox"
-                    checked={documentData.tipo_acceso.embargo?.activo}
+                    checked={!!documentData.tipo_acceso.embargo?.activo}
                     disabled={documentData.tipo_acceso.abierto}
                     onChange={() =>
                       setDocumentData((p) => ({
