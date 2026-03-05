@@ -130,7 +130,7 @@ const selectTipoAcceso = useCallback((key) => {
       "DNI inválido",
       "Ingrese un DNI válido de 8 dígitos"
     );
-    return;
+    return false;
   }
 
   try {
@@ -146,11 +146,7 @@ const selectTipoAcceso = useCallback((key) => {
     const data = await response.json();
 
     if (!response.ok) {
-      showTopErrorToast(
-        "Docente no encontrado",
-        data.message || "Verifique el DNI ingresado"
-      );
-      return;
+      return false;
     }
 
     setAdvisors(prev =>
@@ -172,6 +168,8 @@ const selectTipoAcceso = useCallback((key) => {
       "Los datos fueron cargados correctamente"
     );
 
+    return true;
+
   } catch (error) {
     console.error("Error buscando docente:", error);
 
@@ -179,6 +177,7 @@ const selectTipoAcceso = useCallback((key) => {
       "Error del servidor",
       "No se pudo consultar la información del docente"
     );
+    return false;
   }
 };
   useEffect(() => {
@@ -313,11 +312,88 @@ const handleAdvisorChange = useCallback((index, name, value) => {
   const showFacultad = showGroupA || showGroupB;
   const anySelected = formData.selectedDegree !== "";
 
+// Función de validación del formulario
+const validateForm = useCallback(() => {
+  const errors = [];
+
+  // 1. Validar grado seleccionado
+  if (!formData.selectedDegree) {
+    errors.push("Seleccione un grado académico");
+  }
+
+  // 2. Validar facultad y programa
+  if (!formData.facultad_escuela) {
+    errors.push("Seleccione una facultad");
+  }
+  if (!formData.escuela_carrera) {
+    errors.push("Seleccione un programa académico");
+  }
+
+  // 3. Validar al menos 1 autor completo
+  const validAuthors = authors.filter(
+    (a) => a.full_name && a.doc_type && a.doc_number && a.email
+  );
+  if (validAuthors.length === 0) {
+    errors.push("Complete los datos de al menos un autor");
+  }
+
+  // 4. Validar asesores (ambos obligatorios)
+  advisors.forEach((advisor, i) => {
+    const label = i === 0 ? "Metodológico" : "Técnico";
+    if (!advisor.full_name || !advisor.doc_number) {
+      errors.push(`Complete los datos del Asesor ${label}`);
+    }
+  });
+
+  // 5. Validar jurados (todos obligatorios)
+  jurados.forEach((jurado) => {
+    if (!jurado.name) {
+      errors.push(`Complete el nombre del ${jurado.role}`);
+    }
+  });
+
+  // 6. Validar datos del documento
+  if (!documentData.year) {
+    errors.push("Ingrese el año del documento");
+  }
+
+  const modalidadSelected = Object.values(documentData.modalidad).some((v) => v);
+  if (!modalidadSelected) {
+    errors.push("Seleccione una modalidad de trabajo");
+  }
+
+  const accesoSelected = Object.values(documentData.tipo_acceso).some((v) => v);
+  if (!accesoSelected) {
+    errors.push("Seleccione un tipo de acceso");
+  }
+
+  // 7. Validar título de la tesis/trabajo
+  if (!formData.declaration_title) {
+    errors.push("Ingrese el título del trabajo de investigación");
+  }
+
+  return errors;
+}, [formData, authors, advisors, jurados, documentData]);
+
+// Verificar si el formulario es válido
+const isFormValid = validateForm().length === 0;
+
 const handleGeneratePdf = useCallback(async () => {
+
+  // Validar antes de generar
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    showTopWarningToast(
+      "Campos incompletos",
+      validationErrors[0]
+    );
+    return;
+  }
 
   try {
 
     setIsGenerating(true);
+
 
     const months = [
       'enero','febrero','marzo','abril','mayo','junio',
@@ -387,7 +463,7 @@ const handleGeneratePdf = useCallback(async () => {
     setIsGenerating(false);
   }
 
-}, [formData, authors, advisors, jurados, documentData]);
+}, [formData, authors, advisors, jurados, documentData, validateForm]);
 
   return (
   <div className="form-container">
@@ -432,6 +508,7 @@ const handleGeneratePdf = useCallback(async () => {
       authors={authors}
       onGeneratePdf={handleGeneratePdf}
       isGenerating={isGenerating}
+      isFormValid={isFormValid}
     />
   </div>
 );

@@ -2,7 +2,7 @@ import React from 'react';
 import PrinterIcon from '../PrinterIcon';
 import FileTextIcon from '../FileTextIcon';
 
-function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
+function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating, isFormValid = false }) {
   const rows = [0, 1];
 
   return (
@@ -71,10 +71,10 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
         type="button"
         className="form-btn form-btn-pdf"
         onClick={onGeneratePdf}
-        disabled={isGenerating}
+        disabled={isGenerating || !isFormValid}
         style={{
-          opacity: isGenerating ? 0.7 : 1,
-          cursor: isGenerating ? "not-allowed" : "pointer",
+          opacity: (isGenerating || !isFormValid) ? 0.7 : 1,
+          cursor: (isGenerating || !isFormValid) ? "not-allowed" : "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -93,15 +93,6 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
           </>
         )}
 
-      </button>
-    </div>
-
-    <div className="form-actions-center">
-      <button type="button" className="form-btn form-btn-print">
-        <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 10 }}>
-          <PrinterIcon size={16} />
-        </span>
-        Imprimir Formulario
       </button>
     </div>
 

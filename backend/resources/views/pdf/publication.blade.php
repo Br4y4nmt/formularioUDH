@@ -108,7 +108,9 @@
   </div>
 
   <div class="page">
-    <div class="document-title">AUTORIZACIÓN DE PUBLICACIÓN DIGITAL Y DECLARACIÓN JURADA DEL TRABAJO DE INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL</div>
+    <div class="document-title">FORMULARIO DE AUTORIZACIÓN DE PUBLICACIÓN PARA TRABAJOS DE
+INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO
+ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL</div>
 
     <div class="auth-section">
       <strong>1. Autorización de Publicación:</strong> <em>(Marque con una "X" según corresponda)</em>
@@ -134,11 +136,11 @@
     <div class="table-note" style="margin-top:-4px;">Ingrese los datos según corresponda.</div>
     <table class="t-bordered small compact-table">
       <tr>
-        <td class="label">Facultad/Escuela:</td>
+        <td class="label">Facultad:</td>
         <td>{{ strtoupper($facultad_escuela ?? '') }}</td>
       </tr>
       <tr>
-        <td class="label">Escuela/Carrera Profesional:</td>
+        <td class="label">Programa Academico:</td>
         <td>{{ strtoupper($escuela_carrera ?? $programa_academico ?? '') }}</td>
       </tr>
       <tr>
@@ -398,16 +400,23 @@
           <ul style="margin:4px 0 6px 18px;">
             <li>Exista mandato legal expreso que impida su difusión.</li>
             <li>Se haya acreditado cesión exclusiva de derechos que prohíba su publicación.</li>
-            <li>Exista impedimento jurídico debidamente sustentado.</li>
           </ul>
         @endif
 
         @if(!empty($acceso['restringido']))
-          <div style="margin-bottom:6px;">Consiste en permitir el acceso únicamente a usuarios autorizados o a la comunidad universitaria.</div>
-          <div style="margin-bottom:6px;">Procede cuando la tesis contenga:</div>
+          <div style="margin-bottom:3px;">
+            Consiste en permitir el acceso únicamente a usuarios autorizados o a la comunidad universitaria.
+          </div>
+          <div style="margin-bottom:3px; font-weight:600;">Procede de manera excepcional cuando la tesis contenga:</div>
           <ul style="margin:4px 0 6px 18px;">
-            <li>Datos personales sensibles.</li>
-            <li>Información clínica identificable.</li>
+            <li>
+              Datos personales sensibles o información clínica identificable cuya anonimización o disociación resulte técnica o metodológicamente imposible sin destruir el valor académico, científico o de contexto de la obra.
+
+              <ul style="margin-top:3px;">
+                <li>*Información empresarial o estratégica sujeta a reserva (con convenios de confidencialidad vigentes).</li>
+                <li>*Información cuya divulgación irrestricta pueda afectar derechos de terceros debidamente comprobados.</li>
+              </ul>
+            </li>
           </ul>
         @endif
 
@@ -421,8 +430,8 @@
             <li>Existan razones académicas debidamente sustentadas.</li>
           </ul>
           @if(!empty($embargoDisplay))
-            <div style="margin-top:6px;">
-              <strong>Tiempo de Embargo:</strong> {{ strtoupper($embargoDisplay) }}
+            <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+              <div><strong>Tiempo de Embargo:</strong> {{ strtoupper($embargoDisplay) }} -- <strong>El periodo inicia desde la atención del Trámite correspondiente</strong></div>
             </div>
           @endif
         @endif

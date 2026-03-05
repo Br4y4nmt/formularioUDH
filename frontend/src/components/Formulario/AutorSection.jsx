@@ -1,6 +1,7 @@
 import React from "react";
 import { buscarEstudiante } from "../../services/estudianteService";
 import { showTopWarningToast, showTopErrorToast, showTopSuccessToast } from "../../utils/toast";
+import Swal from 'sweetalert2';
 
 function AutorSection({ authors, onAuthorChange, onSearchCode }) {
 
@@ -45,6 +46,25 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
     showTopSuccessToast("Estudiante encontrado", "Los datos fueron cargados correctamente");
 
   } catch (e) {
+    const status = e?.response?.status;
+    const serverMsg = String(e?.response?.data?.message || e?.response?.data?.error || "").toLowerCase();
+
+    if (
+      status === 503 ||
+      /mantenimiento|service unavailable|server maintenance/i.test(serverMsg) ||
+      /networkerror|failed to fetch|network request failed|timeout/i.test(String(e?.message || "").toLowerCase())
+    ) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Servidor en mantenimiento',
+        text: 'El servidor está en mantenimiento, vuelva a intentarlo en 5 minutos.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#48A6A7',
+        allowOutsideClick: false,
+      });
+      return;
+    }
+
     const msg =
       e?.response?.data?.message ||
       e?.response?.data?.error ||

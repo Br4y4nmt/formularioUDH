@@ -54,7 +54,19 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
       const result = onBuscarDni(index, dni);
       const resolved = result && typeof result.then === "function" ? await result : result;
 
-      if (!resolved) {
+      let found = false;
+      if (resolved === true) {
+        found = true;
+      } else if (resolved && typeof resolved === "object") {
+        found = true;
+      } else {
+        const current = advisors && advisors[index];
+        if (current && (current.full_name || current.doc_number || current.orcid)) {
+          found = true;
+        }
+      }
+
+      if (!found) {
         const swalResult = await Swal.fire({
           icon: "warning",
           title: "Asesor no encontrado",

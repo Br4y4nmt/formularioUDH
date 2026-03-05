@@ -81,7 +81,7 @@ function DegreeSection({
 
           {(anySelected ? showFacultad : true) && (
             <tr>
-              <td className="label-cell">Facultad/Escuela:</td>
+              <td className="label-cell">Facultad:</td>
               <td colSpan="5">
                 <select
                   className="table-select"
@@ -106,7 +106,7 @@ function DegreeSection({
             {(anySelected ? showGroupA : true) && (
               <>
                 <tr>
-                  <td className="label-cell">Escuela/Carrera Profesional:</td>
+                  <td className="label-cell">Programa academico:</td>
                   <td colSpan="5">
                     <select
                       className="table-select"
@@ -145,7 +145,7 @@ function DegreeSection({
           {(anySelected ? showGroupB : true) && (
             <>
               <tr>
-                <td className="label-cell">Escuela/Carrera Profesional:</td>
+                <td className="label-cell">Programa academico:</td>
                 <td colSpan="5">
                   <select
                     className="table-select"
