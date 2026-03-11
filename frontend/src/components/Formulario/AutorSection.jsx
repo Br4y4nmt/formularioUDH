@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { buscarEstudiante } from "../../services/estudianteService";
 import { showTopWarningToast, showTopErrorToast, showTopSuccessToast } from "../../utils/toast";
 import Swal from 'sweetalert2';
+import ButtonSpinner from "../ButtonSpinner";
 
 function AutorSection({ authors, onAuthorChange, onSearchCode }) {
+  const [loadingIndex, setLoadingIndex] = useState(null);
 
   const handleBuscar = async (idx, code) => {
   const inputEl = document.querySelector(`input[name="author_code_${idx}"]`);
@@ -19,6 +21,7 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
   }
 
   try {
+    setLoadingIndex(idx);
     const data = await buscarEstudiante(clean);
     const stu = data || {};
 
@@ -72,6 +75,8 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
       "Error al buscar estudiante.";
 
     showTopErrorToast("Error al buscar", msg);
+  } finally {
+    setLoadingIndex(null);
   }
 };
 
@@ -108,8 +113,11 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                       type="button"
                       onClick={() => handleBuscar(idx, author.university_code)}
                       className="btn-search"
+                      disabled={loadingIndex === idx}
+                      style={{ display: "inline-flex", alignItems: "center", gap: "6px", minWidth: "80px", justifyContent: "center" }}
                     >
-                      Buscar
+                      {loadingIndex === idx ? <ButtonSpinner size={14} color="#fff" /> : null}
+                      {loadingIndex === idx ? "Buscando" : "Buscar"}
                     </button>
                   </div>
                 </td>
@@ -127,7 +135,7 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                 </td>
               </tr>
               <tr>
-                <td className="label-cell">Tipo de Documento:</td>
+                <td className="label-cell " style={{ color: "#7a8290" }}>Tipo de Documento:</td>
 
                 <td>
                   <label>
@@ -187,7 +195,7 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                 </td>
               </tr>
               <tr>
-                <td className="label-cell">Correo Electrónico:</td>
+                <td className="label-cell" style={{ color: "#7a8290" }}>Correo Electrónico:</td>
                 <td colSpan="5">
                   <input
                     type="email"
