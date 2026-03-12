@@ -108,9 +108,8 @@
   </div>
 
   <div class="page">
-    <div class="document-title">FORMULARIO DE AUTORIZACIÓN DE PUBLICACIÓN PARA TRABAJOS DE
-INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO
-ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL</div>
+    <div class="document-title">FORMULARIO DE AUTORIZACIÓN DE PUBLICACIÓN PARA TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL,
+TRABAJO DE INVESTIGACIÓN Y TRABAJO ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL</div>
 
     <div class="auth-section">
       <strong>1. Autorización de Publicación:</strong> <em>(Marque con una "X" según corresponda)</em>

@@ -180,6 +180,42 @@ const selectTipoAcceso = useCallback((key) => {
     return false;
   }
 };
+
+  const handleBuscarDniJurado = async (index, dni) => {
+    if (!dni || dni.length !== 8) {
+      showTopWarningToast("DNI inválido", "Ingrese un DNI válido de 8 dígitos");
+      return false;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/buscar-asesor-dni`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dni })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return false;
+      }
+
+      setJurados(prev =>
+        prev.map((j, i) =>
+          i === index ? { ...j, name: data.nombre } : j
+        )
+      );
+
+      showTopSuccessToast("Jurado encontrado", "Los datos fueron cargados correctamente");
+      return true;
+
+    } catch (error) {
+      console.error("Error buscando jurado:", error);
+      showTopErrorToast("Error del servidor", "No se pudo consultar la información del jurado");
+      return false;
+    }
+  };
+
   useEffect(() => {
   const programaId = formData.escuela_carrera;
   const nivel = formData.selectedDegree;
@@ -311,17 +347,13 @@ const handleAdvisorChange = useCallback((index, name, value) => {
     formData.selectedDegree === "doctor";
   const showFacultad = showGroupA || showGroupB;
   const anySelected = formData.selectedDegree !== "";
-
-// Función de validación del formulario
 const validateForm = useCallback(() => {
   const errors = [];
 
-  // 1. Validar grado seleccionado
   if (!formData.selectedDegree) {
     errors.push("Seleccione un grado académico");
   }
 
-  // 2. Validar facultad y programa
   if (!formData.facultad_escuela) {
     errors.push("Seleccione una facultad");
   }
@@ -329,7 +361,6 @@ const validateForm = useCallback(() => {
     errors.push("Seleccione un programa académico");
   }
 
-  // 3. Validar al menos 1 autor completo
   const validAuthors = authors.filter(
     (a) => a.full_name && a.doc_type && a.doc_number && a.email
   );
@@ -337,7 +368,6 @@ const validateForm = useCallback(() => {
     errors.push("Complete los datos de al menos un autor");
   }
 
-  // 4. Validar asesores (ambos obligatorios)
   advisors.forEach((advisor, i) => {
     const label = i === 0 ? "Metodológico" : "Técnico";
     if (!advisor.full_name || !advisor.doc_number) {
@@ -345,14 +375,12 @@ const validateForm = useCallback(() => {
     }
   });
 
-  // 5. Validar jurados (todos obligatorios)
   jurados.forEach((jurado) => {
     if (!jurado.name) {
       errors.push(`Complete el nombre del ${jurado.role}`);
     }
   });
 
-  // 6. Validar datos del documento
   if (!documentData.year) {
     errors.push("Ingrese el año del documento");
   }
@@ -367,7 +395,6 @@ const validateForm = useCallback(() => {
     errors.push("Seleccione un tipo de acceso");
   }
 
-  // 7. Validar título de la tesis/trabajo
   if (!formData.declaration_title) {
     errors.push("Ingrese el título del trabajo de investigación");
   }
@@ -375,12 +402,9 @@ const validateForm = useCallback(() => {
   return errors;
 }, [formData, authors, advisors, jurados, documentData]);
 
-// Verificar si el formulario es válido
 const isFormValid = validateForm().length === 0;
 
 const handleGeneratePdf = useCallback(async () => {
-
-  // Validar antes de generar
   const validationErrors = validateForm();
   if (validationErrors.length > 0) {
     showTopWarningToast(
@@ -491,7 +515,7 @@ const handleGeneratePdf = useCallback(async () => {
     onBuscarDni={handleBuscarDniAsesor}
   />
 
-    <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} />
+    <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} onBuscarDni={handleBuscarDniJurado} />
 
     <DocumentSection
       documentData={documentData}

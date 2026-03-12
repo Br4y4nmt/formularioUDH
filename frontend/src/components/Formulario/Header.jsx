@@ -31,9 +31,8 @@ function Header() {
       <div className="header-title">
         <h2>Formulario de Autorización de Publicación</h2>
         <p>
-          PARA TRABAJOS DE
-          INVESTIGACIÓN, TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL O TRABAJO
-          ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL
+          PARA TESIS, TRABAJO DE SUFICIENCIA PROFESIONAL, TRABAJO DE
+          INVESTIGACIÓN Y TRABAJO ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PROFESIONAL
         </p>
       </div>
     </div>

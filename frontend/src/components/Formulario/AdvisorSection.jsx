@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
 import Swal from "sweetalert2";
 import { openWhatsApp } from "../../services/contact";
+import ButtonSpinner from "../ButtonSpinner";
 
 function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone = "51952068664", contactMessage = "Hola, necesito que registren a mi asesor/jurado en el formulario de autorización. Estos son sus datos:  " }) {
 
   const [dniInputs, setDniInputs] = useState({});
+  const [loadingIndex, setLoadingIndex] = useState(null);
   const dniRefs = useRef({});
 
   const handleDniChange = (index, value) => {
@@ -50,6 +52,7 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
 
     if (!onBuscarDni) return;
 
+    setLoadingIndex(index);
     try {
       const result = onBuscarDni(index, dni);
       const resolved = result && typeof result.then === "function" ? await result : result;
@@ -86,6 +89,8 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
         text: "Ocurrió un error al buscar el asesor.",
         confirmButtonText: "Cerrar",
       });
+    } finally {
+      setLoadingIndex(null);
     }
   };
 
@@ -115,15 +120,18 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
               type="button"
               onClick={() => handleBuscar(index)}
               className="btn-search"
+              disabled={loadingIndex === index}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", minWidth: "80px", justifyContent: "center" }}
             >
-              Buscar
+              {loadingIndex === index ? <ButtonSpinner size={14} color="#fff" /> : null}
+              {loadingIndex === index ? "Buscando" : "Buscar"}
             </button>
           </div>
         </td>
       </tr>
 
       <tr>
-        <td className="label-cell">Apellidos y Nombres:</td>
+        <td className="label-cell" style={{ color: "#7a8290" }}>Apellidos y Nombres:</td>
         <td colSpan="5">
           <input
             type="text"
@@ -137,7 +145,7 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
       </tr>
 
       <tr>
-        <td className="label-cell">Tipo de Documento:</td>
+        <td className="label-cell " style={{ color: "#7a8290" }}>Tipo de Documento:</td>
 
         <td>
           <label>
@@ -198,7 +206,7 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
       </tr>
 
       <tr>
-        <td className="label-cell">ORCID:</td>
+        <td className="label-cell" style={{ color: "#7a8290" }}>ORCID:</td>
         <td colSpan="5">
           <input
             type="url"
