@@ -126,10 +126,9 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                   <input
                     type="text"
                     value={author.full_name || ""}
-                    onChange={(e) =>
-                      onAuthorChange(idx, "full_name", e.target.value)
-                    }
+                    readOnly
                     placeholder="Apellidos y Nombres"
+                    className="input-readonly"
                     style={{ width: "100%" }}
                   />
                 </td>
@@ -138,42 +137,39 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                 <td className="label-cell " style={{ color: "#7a8290" }}>Tipo de Documento:</td>
 
                 <td>
-                  <label>
+                  <label className="label-readonly">
                     <input
                       type="radio"
                       name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "dni"}
-                      onChange={() =>
-                        onAuthorChange(idx, "doc_type", "dni")
-                      }
+                      disabled
+                      onChange={() => {}}
                     />
                     DNI
                   </label>
                 </td>
 
                 <td>
-                  <label>
+                  <label className="label-readonly">
                     <input
                       type="radio"
                       name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "pasaporte"}
-                      onChange={() =>
-                        onAuthorChange(idx, "doc_type", "pasaporte")
-                      }
+                      disabled
+                      onChange={() => {}}
                     />
                     Pasaporte
                   </label>
                 </td>
 
                 <td>
-                  <label>
+                  <label className="label-readonly">
                     <input
                       type="radio"
                       name={`author_doc_type_${idx}`}
                       checked={author.doc_type === "ce"}
-                      onChange={() =>
-                        onAuthorChange(idx, "doc_type", "ce")
-                      }
+                      disabled
+                      onChange={() => {}}
                     />
                     C.E.
                   </label>
@@ -185,12 +181,9 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                   <input
                     type="text"
                     value={author.doc_number || ""}
-                    onChange={(e) =>
-                      onAuthorChange(idx, "doc_number", e.target.value)
-                    }
-                    maxLength={author.doc_type === "dni" ? 8 : undefined}
-                    inputMode={author.doc_type === "dni" ? "numeric" : "text"}
+                    readOnly
                     placeholder="N° de documento"
+                    className="input-readonly"
                   />
                 </td>
               </tr>
@@ -200,10 +193,9 @@ function AutorSection({ authors, onAuthorChange, onSearchCode }) {
                   <input
                     type="email"
                     value={author.email || ""}
-                    onChange={(e) =>
-                      onAuthorChange(idx, "email", e.target.value)
-                    }
+                    readOnly
                     placeholder="Correo Electrónico"
+                    className="input-readonly"
                   />
                 </td>
               </tr>

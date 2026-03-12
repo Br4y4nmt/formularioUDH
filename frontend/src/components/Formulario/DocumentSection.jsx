@@ -100,11 +100,16 @@ function DocumentSection({
           <li>La tesis será sometida a publicación en revista científica que exija embargo.</li>
           <li>Exista proceso de patente o protección de propiedad intelectual en trámite.</li>
           <li>Medie convenio con cláusula de confidencialidad temporal.</li>
-         
         </ul>
       </div>
     );
   }
+
+  const currentYear = new Date().getFullYear();
+  const yearVal = documentData.year || "";
+  const isYearInvalid =
+    yearVal.length === 4 &&
+    (parseInt(yearVal, 10) < 2018 || parseInt(yearVal, 10) > currentYear);
 
   return (
     <div className="section-card">
@@ -131,14 +136,20 @@ function DocumentSection({
               <input
                 type="text"
                 className="year-input"
-                value={documentData.year || ""}
+                value={yearVal}
                 maxLength={4}
                 inputMode="numeric"
+                style={isYearInvalid ? { borderColor: '#d32f2f', outline: 'none', boxShadow: '0 0 0 2px #d32f2f33' } : {}}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, "").slice(0, 4);
                   setDocumentData((p) => ({ ...p, year: value }));
                 }}
               />
+              {isYearInvalid && (
+                <div style={{ color: '#d32f2f', fontSize: '11px', marginTop: 4, whiteSpace: 'nowrap' }}>
+                  Solo entre 2018 y {currentYear}
+                </div>
+              )}
             </td>
           </tr>
 
@@ -242,6 +253,40 @@ function DocumentSection({
           {mensajes.map((msg, i) => (
             <div key={i}>{msg}</div>
           ))}
+
+          {(documentData.tipo_acceso.cerrado || documentData.tipo_acceso.restringido || documentData.tipo_acceso.embargo?.activo) && (
+            <div style={{ marginTop: "14px" }}>
+              <label style={{ fontWeight: 600, display: "block", marginBottom: 6 }}>
+                Sustente la razón por la que solicita este tipo de acceso:
+                <span style={{ color: '#d32f2f' }}> *</span>
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Describa detalladamente el motivo por el cual requiere este tipo de acceso..."
+                value={documentData.sustentar_razon || ""}
+                onChange={(e) => {
+                  const words = e.target.value.trim() === "" ? [] : e.target.value.trim().split(/\s+/);
+                  if (words.length <= 40) {
+                    setDocumentData((p) => ({ ...p, sustentar_razon: e.target.value }));
+                  }
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px 10px",
+                  borderRadius: 6,
+                  border: `1.5px solid ${colorBorde}`,
+                  fontSize: 13,
+                  resize: "vertical",
+                  fontFamily: "inherit",
+                  boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
+              <div style={{ fontSize: 11, color: (() => { const w = (documentData.sustentar_razon || "").trim() === "" ? 0 : (documentData.sustentar_razon || "").trim().split(/\s+/).length; return w >= 40 ? '#d32f2f' : '#888'; })(), textAlign: 'right', marginTop: 3 }}>
+                {((documentData.sustentar_razon || "").trim() === "" ? 0 : (documentData.sustentar_razon || "").trim().split(/\s+/).length)} / 40 palabras
+              </div>
+            </div>
+          )}
 
           {documentData.tipo_acceso.embargo?.activo && (
             <div style={{ display: "flex", gap: "20px", marginTop: "10px", alignItems: 'center' }}>

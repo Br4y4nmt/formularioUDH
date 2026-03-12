@@ -351,66 +351,75 @@ const validateForm = useCallback(() => {
   const errors = [];
 
   if (!formData.selectedDegree) {
-    errors.push("Seleccione un grado académico");
+    errors.push({ message: "Seleccione un grado académico", sectionId: "section-grado" });
   }
 
   if (!formData.facultad_escuela) {
-    errors.push("Seleccione una facultad");
+    errors.push({ message: "Seleccione una facultad", sectionId: "section-grado" });
   }
   if (!formData.escuela_carrera) {
-    errors.push("Seleccione un programa académico");
+    errors.push({ message: "Seleccione un programa académico", sectionId: "section-grado" });
   }
 
   const validAuthors = authors.filter(
     (a) => a.full_name && a.doc_type && a.doc_number && a.email
   );
   if (validAuthors.length === 0) {
-    errors.push("Complete los datos de al menos un autor");
+    errors.push({ message: "Complete los datos de al menos un autor", sectionId: "section-autores" });
   }
 
   advisors.forEach((advisor, i) => {
     const label = i === 0 ? "Metodológico" : "Técnico";
     if (!advisor.full_name || !advisor.doc_number) {
-      errors.push(`Complete los datos del Asesor ${label}`);
+      errors.push({ message: `Complete los datos del Asesor ${label}`, sectionId: "section-asesores" });
     }
   });
 
   jurados.forEach((jurado) => {
     if (!jurado.name) {
-      errors.push(`Complete el nombre del ${jurado.role}`);
+      errors.push({ message: `Complete el nombre del ${jurado.role}`, sectionId: "section-jurados" });
     }
   });
 
   if (!documentData.year) {
-    errors.push("Ingrese el año del documento");
+    errors.push({ message: "Ingrese el año del documento", sectionId: "section-documento" });
+  } else {
+    const yearNum = parseInt(documentData.year, 10);
+    const currentYear = new Date().getFullYear();
+    if (documentData.year.length < 4 || yearNum < 2018 || yearNum > currentYear) {
+      errors.push({ message: `El año debe estar entre 2018 y ${currentYear}`, sectionId: "section-documento" });
+    }
   }
 
   const modalidadSelected = Object.values(documentData.modalidad).some((v) => v);
   if (!modalidadSelected) {
-    errors.push("Seleccione una modalidad de trabajo");
+    errors.push({ message: "Seleccione una modalidad de trabajo", sectionId: "section-documento" });
   }
 
   const accesoSelected = Object.values(documentData.tipo_acceso).some((v) => v);
   if (!accesoSelected) {
-    errors.push("Seleccione un tipo de acceso");
+    errors.push({ message: "Seleccione un tipo de acceso", sectionId: "section-documento" });
+  }
+
+  const requiereRazon = documentData.tipo_acceso.cerrado || documentData.tipo_acceso.restringido || documentData.tipo_acceso.embargo?.activo;
+  if (requiereRazon && !documentData.sustentar_razon?.trim()) {
+    errors.push({ message: "Sustente la razón del tipo de acceso seleccionado", sectionId: "section-documento" });
   }
 
   if (!formData.declaration_title) {
-    errors.push("Ingrese el título del trabajo de investigación");
+    errors.push({ message: "Ingrese el título del trabajo de investigación", sectionId: "section-declaracion" });
   }
 
   return errors;
 }, [formData, authors, advisors, jurados, documentData]);
 
-const isFormValid = validateForm().length === 0;
-
 const handleGeneratePdf = useCallback(async () => {
   const validationErrors = validateForm();
   if (validationErrors.length > 0) {
-    showTopWarningToast(
-      "Campos incompletos",
-      validationErrors[0]
-    );
+    const first = validationErrors[0];
+    showTopWarningToast("Campos incompletos", first.message);
+    const el = document.getElementById(first.sectionId);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
@@ -494,45 +503,58 @@ const handleGeneratePdf = useCallback(async () => {
 
     <Header />
 
-    <DegreeSection
-      formData={formData}
-      selectDegree={selectDegree}
-      facultades={facultades}
-      programas={programas}
-      handleFacultadChange={handleFacultadChange}
-      handleChange={handleChange}
-      showFacultad={showFacultad}
-      showGroupA={showGroupA}
-      showGroupB={showGroupB}
-      anySelected={anySelected}
-    />
+    <div id="section-grado">
+      <DegreeSection
+        formData={formData}
+        selectDegree={selectDegree}
+        facultades={facultades}
+        programas={programas}
+        handleFacultadChange={handleFacultadChange}
+        handleChange={handleChange}
+        showFacultad={showFacultad}
+        showGroupA={showGroupA}
+        showGroupB={showGroupB}
+        anySelected={anySelected}
+      />
+    </div>
 
-    <AutorSection authors={authors} onAuthorChange={handleAuthorChange} />
+    <div id="section-autores">
+      <AutorSection authors={authors} onAuthorChange={handleAuthorChange} />
+    </div>
 
-    <AdvisorSection
-    advisors={advisors}
-    onAdvisorChange={handleAdvisorChange}
-    onBuscarDni={handleBuscarDniAsesor}
-  />
+    <div id="section-asesores">
+      <AdvisorSection
+        advisors={advisors}
+        onAdvisorChange={handleAdvisorChange}
+        onBuscarDni={handleBuscarDniAsesor}
+      />
+    </div>
 
-    <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} onBuscarDni={handleBuscarDniJurado} />
+    <div id="section-jurados">
+      <JuradosSection jurados={jurados} onJuradoChange={handleJuradoChange} onBuscarDni={handleBuscarDniJurado} />
+    </div>
 
-    <DocumentSection
-      documentData={documentData}
-      setDocumentData={setDocumentData}
-      toggleModalidad={toggleModalidad}
-      selectTipoAcceso={selectTipoAcceso}
-    />
-    <DeclarationSection
-      declaration_title={formData.declaration_title}
-      declaration_text={formData.declaration_text}
-      onChange={handleChange}
-    />
+    <div id="section-documento">
+      <DocumentSection
+        documentData={documentData}
+        setDocumentData={setDocumentData}
+        toggleModalidad={toggleModalidad}
+        selectTipoAcceso={selectTipoAcceso}
+      />
+    </div>
+
+    <div id="section-declaracion">
+      <DeclarationSection
+        declaration_title={formData.declaration_title}
+        declaration_text={formData.declaration_text}
+        onChange={handleChange}
+      />
+    </div>
+
     <PublicationAuthSection
       authors={authors}
       onGeneratePdf={handleGeneratePdf}
       isGenerating={isGenerating}
-      isFormValid={isFormValid}
     />
   </div>
 );
