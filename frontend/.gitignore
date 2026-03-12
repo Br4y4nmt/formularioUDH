@@ -12,6 +12,15 @@ dist
 dist-ssr
 *.local
 
+# Environment
+.env
+
+# Build
+dist.zip
+
+# Config
+vite.config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
