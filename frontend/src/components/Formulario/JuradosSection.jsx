@@ -137,8 +137,9 @@ function JuradosSection({
                   <input
                     type="text"
                     value={j.name}
-                    onChange={(e) => onJuradoChange(idx, e)}
+                    readOnly
                     placeholder="Apellidos y Nombres"
+                    className="input-readonly"
                   />
                 </td>
               </tr>

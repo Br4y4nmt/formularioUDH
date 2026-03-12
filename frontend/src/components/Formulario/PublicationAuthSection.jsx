@@ -2,7 +2,7 @@ import React from 'react';
 import PrinterIcon from '../PrinterIcon';
 import FileTextIcon from '../FileTextIcon';
 
-function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating, isFormValid = false }) {
+function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating }) {
   const rows = [0, 1];
 
   return (
@@ -71,10 +71,10 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating, isF
         type="button"
         className="form-btn form-btn-pdf"
         onClick={onGeneratePdf}
-        disabled={isGenerating || !isFormValid}
+        disabled={isGenerating}
         style={{
-          opacity: (isGenerating || !isFormValid) ? 0.7 : 1,
-          cursor: (isGenerating || !isFormValid) ? "not-allowed" : "pointer",
+          opacity: isGenerating ? 0.7 : 1,
+          cursor: isGenerating ? "not-allowed" : "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -97,13 +97,10 @@ function PublicationAuthSection({ authors = [], onGeneratePdf, isGenerating, isF
     </div>
 
   </div>
-
-  <div className="form-actions-warning">
-    Por favor complete todos los campos obligatorios (*)
-  </div>
 </div>
     </div>
   );
 }
 
 export default React.memo(PublicationAuthSection);
+  

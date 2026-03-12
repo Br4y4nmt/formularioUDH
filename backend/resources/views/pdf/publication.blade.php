@@ -370,8 +370,8 @@ TRABAJO DE INVESTIGACIÓN Y TRABAJO ACADÉMICO PARA OPTAR UN GRADO O TÍTULO PRO
 
   {{-- Sustentar razón --}}
   <tr>
-    <td class="label">(*) Sustentar razón:</td>
-    <td colspan="8">
+    <td class="label" style="vertical-align:top;">(*) Sustentar razón:</td>
+    <td colspan="8" style="white-space:normal; word-wrap:break-word; overflow-wrap:break-word; vertical-align:top; padding:3px 6px;">
       {{ strtoupper($doc['sustentar_razon'] ?? '') }}
     </td>
   </tr>

@@ -136,10 +136,9 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
           <input
             type="text"
             value={advisor.full_name || ""}
-            onChange={(e) =>
-              onAdvisorChange(index, "full_name", e.target.value)
-            }
+            readOnly
             placeholder="Apellidos y Nombres"
+            className="input-readonly"
           />
         </td>
       </tr>
@@ -148,42 +147,39 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
         <td className="label-cell " style={{ color: "#7a8290" }}>Tipo de Documento:</td>
 
         <td>
-          <label>
+          <label className="label-readonly">
             <input
               type="radio"
               name={`advisor_doc_type_${index}`}
               checked={advisor.doc_type === "dni"}
-              onChange={() =>
-                onAdvisorChange(index, "doc_type", "dni")
-              }
+              disabled
+              onChange={() => {}}
             />
             DNI
           </label>
         </td>
 
         <td>
-          <label>
+          <label className="label-readonly">
             <input
               type="radio"
               name={`advisor_doc_type_${index}`}
               checked={advisor.doc_type === "pasaporte"}
-              onChange={() =>
-                onAdvisorChange(index, "doc_type", "pasaporte")
-              }
+              disabled
+              onChange={() => {}}
             />
             Pasaporte
           </label>
         </td>
 
         <td>
-          <label>
+          <label className="label-readonly">
             <input
               type="radio"
               name={`advisor_doc_type_${index}`}
               checked={advisor.doc_type === "ce"}
-              onChange={() =>
-                onAdvisorChange(index, "doc_type", "ce")
-              }
+              disabled
+              onChange={() => {}}
             />
             C.E.
           </label>
@@ -195,12 +191,9 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
           <input
             type="text"
             value={advisor.doc_number || ""}
-            onChange={(e) =>
-              onAdvisorChange(index, "doc_number", e.target.value)
-            }
-            maxLength={advisor.doc_type === "dni" ? 8 : undefined}
-            inputMode={advisor.doc_type === "dni" ? "numeric" : "text"}
+            readOnly
             placeholder="N° de documento"
+            className="input-readonly"
           />
         </td>
       </tr>
@@ -209,12 +202,11 @@ function AdvisorSection({ advisors, onAdvisorChange, onBuscarDni, contactPhone =
         <td className="label-cell" style={{ color: "#7a8290" }}>ORCID:</td>
         <td colSpan="5">
           <input
-            type="url"
+            type="text"
             value={advisor.orcid || ""}
-            onChange={(e) =>
-              onAdvisorChange(index, "orcid", e.target.value)
-            }
+            readOnly
             placeholder="https://orcid.org/0000-0000-0000-0000"
+            className="input-readonly"
           />
         </td>
       </tr>
