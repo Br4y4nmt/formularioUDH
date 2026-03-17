@@ -46,12 +46,14 @@ function DocumentSection({
 
   if (documentData.tipo_acceso.cerrado) {
     mensajes.push(
-      "Consiste en la no disponibilidad pública del texto completo, mostrando únicamente los metadatos."
+      "Consiste en la no disponibilidad pública del texto completo, mostrando únicamente los metadatos. De ser necesario, existe la opción de no registrar el resumen y, en aquellos casos donde el título contenga un dato que no se deba mostrar, se colocará en su lugar 'Título Reservado'. Esta restricción aplica a la difusión pública; la institución remitirá el texto completo internamente a la SUNEDU para su registro en el RENATI."
     );
     mensajes.push(
       <div>
         <div>Procede únicamente cuando:</div>
         <ul style={{ margin: '6px 0 0 18px' }}>
+          <li>Exista un proceso de patente o protección de propiedad intelectual en trámite.</li>
+          <li>Contenga información confidencial, de seguridad nacional o de cualquier índole de similar naturaleza que amerite la reserva de la información.</li>
           <li>Exista mandato legal expreso que impida su difusión.</li>
           <li>Se haya acreditado cesión exclusiva de derechos que prohíba su publicación.</li>
           <li>Exista impedimento jurídico debidamente sustentado.</li>
@@ -63,25 +65,25 @@ function DocumentSection({
 
   if (documentData.tipo_acceso.restringido) {
     mensajes.push(
-      "Consiste en permitir el acceso únicamente a usuarios autorizados o a la comunidad universitaria."
+      "Consiste en permitir el acceso únicamente a usuarios autorizados o a la comunidad universitaria, manteniéndose visibles los metadatos del trabajo; asimismo, se deberá publicar como mínimo la carátula y constancia de originalidad, y de ser el caso, el resumen correspondiente, conforme a lo establecido en el Reglamento RENATI."
     );
     mensajes.push(
       <div>
         <div>Procede de manera excepcional cuando la tesis contenga:</div>
         <ul style={{ margin: '6px 0 0 18px' }}>
           <li>Datos personales sensibles o información clínica identificable cuya anonimización o disociación resulte técnica o metodológicamente imposible sin destruir el valor académico, científico o de contexto de la obra.
-
-            <ul>
+</li>
+            
                     <li>
-              *Información empresarial o estratégica sujeta a reserva (con convenios de confidencialidad vigentes). 
+              Información empresarial o estratégica sujeta a reserva (con convenios de confidencialidad vigentes). 
 
           </li>
           <li>
-              *Información cuya divulgación irrestricta pueda afectar derechos de terceros debidamente comprobados. 
+              Información cuya divulgación irrestricta pueda afectar derechos de terceros debidamente comprobados. 
 
           </li>
-            </ul>
-          </li>
+        
+          
     
         </ul>
       </div>
@@ -91,14 +93,14 @@ function DocumentSection({
 
   if (documentData.tipo_acceso.embargo?.activo) {
     mensajes.push(
-      "Consiste en la restricción del acceso al texto completo por un plazo determinado, manteniéndose visibles los metadatos."
+      "Consiste en la restricción del acceso al texto completo por un plazo determinado, manteniéndose visibles solo los metadatos y un archivo con la carátula y constancia de originalidad."
     );
     mensajes.push(
       <div>
         <div>Procede cuando:</div>
         <ul style={{ margin: '6px 0 0 18px' }}>
-          <li>La tesis será sometida a publicación en revista científica que exija embargo.</li>
-          <li>Exista proceso de patente o protección de propiedad intelectual en trámite.</li>
+          <li>La tesis o trabajo de investigación será sometido a publicación en una revista científica o editorial que exija periodo de embargo.</li>
+          
           <li>Medie convenio con cláusula de confidencialidad temporal.</li>
         </ul>
       </div>

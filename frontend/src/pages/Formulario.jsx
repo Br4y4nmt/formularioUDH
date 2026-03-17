@@ -51,7 +51,7 @@ function Formulario() {
   const [jurados, setJurados] = useState([
       { role: "Presidente", name: "" },
       { role: "Secretario", name: "" },
-      { role: "Vocal", name: "" },
+      { role: "Vocal/Accesitario", name: "" },
     ]);
 
   const [documentData, setDocumentData] = useState({
