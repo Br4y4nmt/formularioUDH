@@ -1,7 +1,8 @@
 import api from "./api";
 
-export async function getFacultades() {
+export async function getFacultades(modId) {
   const res = await api.get("/api/facultades", {
+    params: modId ? { mod_id: modId } : undefined,
     headers: { Accept: "application/json" },
   });
   const data = res.data;

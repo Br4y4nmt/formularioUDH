@@ -126,19 +126,35 @@ function DegreeSection({
                   </td>
                 </tr>
 
-                <tr>
-                  <td className="label-cell">Título Profesional otorgado:</td>
-                  <td colSpan="5">
-                    <input
-                      type="text"
-                      name="titulo_otorga"
-                      value={formData.titulo_otorga}
-                      readOnly
-                      disabled={!anySelected || !showGroupA}
-                      placeholder="Se completará automáticamente"
-                    />
-                  </td>
-                </tr>
+                {formData.selectedDegree === 'bachiller' ? (
+                  <tr>
+                    <td className="label-cell">Grado que se le otorga:</td>
+                    <td colSpan="5">
+                      <input
+                        type="text"
+                        name="grado_otorga"
+                        value={formData.grado_otorga}
+                        readOnly
+                        disabled={!anySelected || !showGroupA}
+                        placeholder="Se completará automáticamente"
+                      />
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td className="label-cell">Título Profesional otorgado:</td>
+                    <td colSpan="5">
+                      <input
+                        type="text"
+                        name="titulo_otorga"
+                        value={formData.titulo_otorga}
+                        readOnly
+                        disabled={!anySelected || !showGroupA}
+                        placeholder="Se completará automáticamente"
+                      />
+                    </td>
+                  </tr>
+                )}
               </>
             )}
 

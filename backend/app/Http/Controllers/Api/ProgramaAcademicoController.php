@@ -12,13 +12,21 @@ class ProgramaAcademicoController extends Controller
     {
         $facultadId = $request->facultad_id;
 
-        $query = ProgramaAcademico::query();
+        $query = ProgramaAcademico::query()
+            ->where('pap_estado', 1);
 
         if ($facultadId) {
-            $query->where('facultad_id', $facultadId);
+            $query->where('fac_id', $facultadId);
         }
 
-        $programas = $query->orderBy('nombre')->get();
+        $programas = $query
+            ->select([
+                'pap_id as id',
+                'pap_nombre as nombre',
+                'fac_id'
+            ])
+            ->orderBy('pap_nombre')
+            ->get();
 
         return response()->json([
             'success' => true,

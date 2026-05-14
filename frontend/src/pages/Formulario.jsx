@@ -116,10 +116,12 @@ const selectTipoAcceso = useCallback((key) => {
     setFormData((prev) => ({
       ...prev,
       selectedDegree: key,
-      titulo_otorga: key === "bachiller" || key === "titulo" ? prev.titulo_otorga : "",
-      grado_otorga: key === "segunda" || key === "maestro" || key === "doctor" ? prev.grado_otorga : "",
+      titulo_otorga: key === "titulo" ? prev.titulo_otorga : "",
+      grado_otorga: key === "bachiller" || key === "segunda" || key === "maestro" || key === "doctor" ? prev.grado_otorga : "",
+      facultad_escuela: "",
       escuela_carrera: "",
     }));
+    setProgramas([]);
   }, []);
 
 
@@ -270,14 +272,29 @@ const selectTipoAcceso = useCallback((key) => {
   useEffect(() => {
     const loadFacultades = async () => {
       try {
-        const list = await getFacultades();
-        setFacultades(list);
+        const modId =
+          formData.selectedDegree === "segunda"
+            ? 2
+            : formData.selectedDegree === "maestro"
+              ? 3
+              : formData.selectedDegree === "doctor"
+                ? 4
+              : formData.selectedDegree === "bachiller" ||
+                formData.selectedDegree === "titulo"
+                ? 1
+                : undefined;
+        const list = await getFacultades(modId);
+        const filtered = modId
+          ? list.filter((f) => String(f.mod_id) === String(modId))
+          : list;
+        setFacultades(filtered);
       } catch (err) {
         console.error("Error loading facultades", err);
+        setFacultades([]);
       }
     };
     loadFacultades();
-  }, []);
+  }, [formData.selectedDegree]);
 
 const handleFacultadChange = useCallback(async (e) => {
   const value = e.target.value;
