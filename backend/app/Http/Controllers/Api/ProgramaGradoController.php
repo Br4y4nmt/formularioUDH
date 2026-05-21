@@ -12,7 +12,7 @@ class ProgramaGradoController extends Controller
     {
         $request->validate([
             'programa_id' => 'required|integer',
-            'nivel' => 'required|string|in:bachiller,titulo,segunda,maestro,doctor',
+            'nivel' => 'required|string|in:bachiller,titulo,segunda,maestria,doctorado',
         ]);
 
         $row = ProgramaGrado::where('programa_id', $request->programa_id)
@@ -29,7 +29,7 @@ class ProgramaGradoController extends Controller
             'programa_id' => $row->programa_id,
             'nivel' => $row->nivel,
             'grado_otorga' => $row->grado_otorga,
-            'titulo_otorga' => $row->titulo_otorga,
+            'titulo_otorga' => '',
         ]);
     }
 }

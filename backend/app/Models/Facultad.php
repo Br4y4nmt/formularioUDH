@@ -6,22 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Facultad extends Model
 {
-    protected $table = 'facultades'; // 👈 MUY IMPORTANTE
+    protected $table = 'form_facultades';
 
-    protected $primaryKey = 'fac_id';
+    protected $primaryKey = 'id';
 
-    const CREATED_AT = 'fac_created';
-    const UPDATED_AT = 'fac_updated';
+    const CREATED_AT = 'creado';
+    const UPDATED_AT = 'actualizado';
 
     protected $fillable = [
-        'fac_nombre',
-        'mod_id',
-        'fac_descripcion',
-        'fac_estado'
+        'nombre',
+        'estado'
     ];
 
     public function programas()
     {
-        return $this->hasMany(ProgramaAcademico::class, 'fac_id', 'fac_id');
+        return $this->hasMany(ProgramaAcademico::class, 'fac_id', 'id');
     }
 }

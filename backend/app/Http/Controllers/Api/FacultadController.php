@@ -10,22 +10,13 @@ class FacultadController extends Controller
 {
     public function index(Request $request)
     {
-        $modId = $request->query('mod_id');
-
-        $query = Facultad::query()
-            ->where('fac_estado', 1);
-
-        if ($modId !== null && $modId !== '') {
-            $query->where('mod_id', $modId);
-        }
-
-        $facultades = $query
+        $facultades = Facultad::query()
+            ->where('estado', 1)
             ->select([
-                'fac_id as id',
-                'fac_nombre as nombre',
-                'mod_id'
+                'id',
+                'nombre'
             ])
-            ->orderBy('fac_nombre')
+            ->orderBy('nombre')
             ->get();
 
         return response()->json([

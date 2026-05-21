@@ -6,27 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramaAcademico extends Model
 {
-    protected $table = 'programas';
+    protected $table = 'form_programas';
 
-    protected $primaryKey = 'pap_id';
+    protected $primaryKey = 'id';
 
-    const CREATED_AT = 'pap_created';
-    const UPDATED_AT = 'pap_updated';
+    const CREATED_AT = 'creado';
+    const UPDATED_AT = 'actualizado';
 
     protected $fillable = [
-        'pap_nombre',
-        'pap_codigo',
-        'pap_descripcion',
-        'pap_estado',
-        'fac_id'
+        'nombre',
+        'fac_id',
+        'cod',
+        'estado'
     ];
 
     public function facultad()
     {
-        return $this->belongsTo(Facultad::class, 'fac_id', 'fac_id');
+        return $this->belongsTo(Facultad::class, 'fac_id', 'id');
     }
+
     public function grados()
     {
-        return $this->hasMany(\App\Models\ProgramaGrado::class, 'programa_id');
+        return $this->hasMany(\App\Models\ProgramaGrado::class, 'programa_id', 'id');
     }
 }

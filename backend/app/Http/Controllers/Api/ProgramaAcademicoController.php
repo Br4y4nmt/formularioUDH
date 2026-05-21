@@ -10,22 +10,28 @@ class ProgramaAcademicoController extends Controller
 {
     public function index(Request $request)
     {
-        $facultadId = $request->facultad_id;
+        $facultadId = $request->query('facultad_id');
+        $cod = $request->query('cod');
 
         $query = ProgramaAcademico::query()
-            ->where('pap_estado', 1);
+            ->where('estado', 1);
 
-        if ($facultadId) {
+        if ($facultadId !== null && $facultadId !== '') {
             $query->where('fac_id', $facultadId);
+        }
+
+        if ($cod !== null && $cod !== '') {
+            $query->where('cod', $cod);
         }
 
         $programas = $query
             ->select([
-                'pap_id as id',
-                'pap_nombre as nombre',
-                'fac_id'
+                'id',
+                'nombre',
+                'fac_id',
+                'cod'
             ])
-            ->orderBy('pap_nombre')
+            ->orderBy('nombre')
             ->get();
 
         return response()->json([
