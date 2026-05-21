@@ -217,20 +217,24 @@ const selectTipoAcceso = useCallback((key) => {
       return false;
     }
   };
-
+ const getNivelOtorga = (degree) => {
+  if (degree === "maestro") return "maestria";
+  if (degree === "doctor") return "doctorado";
+  return degree;
+};
   useEffect(() => {
-  const programaId = formData.escuela_carrera;
-  const nivel = formData.selectedDegree;
+    const programaId = formData.escuela_carrera;
+    const nivel = getNivelOtorga(formData.selectedDegree);
+    if (!programaId || !nivel) {
+      setFormData(prev => ({
+        ...prev,
+        titulo_otorga: "",
+        grado_otorga: ""
+      }));
+      return;
+    }
 
-  if (!programaId || !nivel) {
-    setFormData(prev => ({
-      ...prev,
-      titulo_otorga: "",
-      grado_otorga: ""
-    }));
-    return;
-  }
-
+  
   const fetchOtorga = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/programa/otorga`, {
@@ -257,64 +261,75 @@ const selectTipoAcceso = useCallback((key) => {
 
       setFormData(prev => ({
         ...prev,
-        titulo_otorga: data.titulo_otorga || "",
-        grado_otorga: data.grado_otorga || ""
+        titulo_otorga: nivel === "titulo" ? data.grado_otorga || "" : "",
+        grado_otorga: nivel !== "titulo" ? data.grado_otorga || "" : ""
       }));
 
     } catch (error) {
       console.error("Error obteniendo grado:", error);
+
+      setFormData(prev => ({
+        ...prev,
+        titulo_otorga: "",
+        grado_otorga: ""
+      }));
     }
   };
 
   fetchOtorga();
 
 }, [formData.escuela_carrera, formData.selectedDegree]);
-  useEffect(() => {
-    const loadFacultades = async () => {
-      try {
-        const modId =
-          formData.selectedDegree === "segunda"
-            ? 2
-            : formData.selectedDegree === "maestro"
-              ? 3
-              : formData.selectedDegree === "doctor"
-                ? 4
-              : formData.selectedDegree === "bachiller" ||
-                formData.selectedDegree === "titulo"
-                ? 1
-                : undefined;
-        const list = await getFacultades(modId);
-        const filtered = modId
-          ? list.filter((f) => String(f.mod_id) === String(modId))
-          : list;
-        setFacultades(filtered);
-      } catch (err) {
-        console.error("Error loading facultades", err);
-        setFacultades([]);
-      }
-    };
-    loadFacultades();
-  }, [formData.selectedDegree]);
+
+useEffect(() => {
+  const loadFacultades = async () => {
+    try {
+      const list = await getFacultades();
+
+      console.log("Facultades cargadas:", list);
+
+      setFacultades(list);
+    } catch (err) {
+      console.error("Error loading facultades", err);
+      setFacultades([]);
+    }
+  };
+
+  loadFacultades();
+}, []);
+
+const getCodByDegree = (degree) => {
+  if (degree === "segunda") return 2;
+  if (degree === "maestro") return 3;
+  if (degree === "doctor") return 4;
+
+  return 1;
+};
 
 const handleFacultadChange = useCallback(async (e) => {
   const value = e.target.value;
-  setFormData((prev) => ({ ...prev, facultad_escuela: value }));
+
+  setFormData((prev) => ({
+    ...prev,
+    facultad_escuela: value,
+    escuela_carrera: "",
+    titulo_otorga: "",
+    grado_otorga: ""
+  }));
 
   if (!value) {
     setProgramas([]);
-    setFormData((prev) => ({ ...prev, escuela_carrera: "" }));
     return;
   }
 
   try {
-    const list = await getProgramas(value);
+    const cod = getCodByDegree(formData.selectedDegree);
+    const list = await getProgramas(value, cod);
     setProgramas(list);
-    setFormData((prev) => ({ ...prev, escuela_carrera: "" }));
   } catch (err) {
     console.error("Error loading programas", err);
     setProgramas([]);
   }
-}, []);
+}, [formData.selectedDegree]);
 
 const handleAuthorChange = useCallback((index, name, value) => {
   setAuthors(prev =>

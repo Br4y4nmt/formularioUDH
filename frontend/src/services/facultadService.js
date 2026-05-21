@@ -1,19 +1,23 @@
 import api from "./api";
 
-export async function getFacultades(modId) {
+export async function getFacultades() {
   const res = await api.get("/api/facultades", {
-    params: modId ? { mod_id: modId } : undefined,
     headers: { Accept: "application/json" },
   });
+
   const data = res.data;
   return Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
 }
 
-export async function getProgramas(facultadId) {
+export async function getProgramas(facultadId, cod) {
   const res = await api.get("/api/programas", {
-    params: { facultad_id: facultadId },
+    params: {
+      facultad_id: facultadId,
+      cod: cod
+    },
     headers: { Accept: "application/json" },
   });
+
   const data = res.data;
   return Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
 }

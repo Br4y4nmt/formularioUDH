@@ -92,9 +92,10 @@ function DegreeSection({
                   required
                 >
                   <option value="" disabled>Seleccione Facultad</option>
+
                   {facultades.map((f) => (
-                    <option key={f.id ?? f.value} value={f.id ?? f.value}>
-                      {f.nombre ?? f.label ?? f.name}
+                    <option key={f.id} value={f.id}>
+                      {f.nombre}
                     </option>
                   ))}
                 </select>
